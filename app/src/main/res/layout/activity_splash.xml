@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SplashActivity"
+    tools:context=".ui.activity.SplashActivity"
     android:background="@color/background">
 
     <LinearLayout
@@ -16,19 +16,19 @@
         <ImageView
             android:layout_width="134dp"
             android:layout_height="134dp"
-            android:background="@drawable/Logo_app"
+            android:src="@drawable/logo"
             android:layout_gravity="center_horizontal"
             />
 
         <TextView
-
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="MUSIC DOWNLOADER"
-            android:textColor="@color/white"
-            android:textSize="28dp"
+            android:layout_gravity="center_horizontal"
             android:padding="10dp"
-            android:layout_gravity="center_horizontal"/>
+            android:text="MUSIC DOWNLOADER"
+            android:fontFamily="@font/inter_semibold"
+            android:textColor="@color/white"
+            android:textSize="28dp" />
 
     </LinearLayout>
 

@@ -9,4 +9,10 @@
     <color name="white">#FFFFFFFF</color>
     <color name="background">#000</color>
     <color name="colorPrimary">#FF728C</color>
+    <color name="navItems">#8A8A8A</color>
+    <color name="SelectedColor">#FF728C</color>
+    <color name="ToponeSong">#F89500</color>
+    <color name="secondSong">#00FF57</color>
+    <color name="thresSong">#FF1C1C</color>
+    <color name="gray">#414141</color>
 </resources>

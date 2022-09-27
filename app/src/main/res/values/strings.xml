@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Music_Download_MS3_TUNK</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
