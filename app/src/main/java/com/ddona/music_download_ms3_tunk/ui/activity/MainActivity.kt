@@ -8,8 +8,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.view.Menu
+import android.view.View
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.appcompat.widget.SearchView
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -25,6 +28,7 @@ import com.ddona.music_download_ms3_tunk.databinding.ActivityMainBinding
 import com.ddona.music_download_ms3_tunk.model.Data
 import com.ddona.music_download_ms3_tunk.model.MusicPlaylist
 import com.ddona.music_download_ms3_tunk.model.exitApplication
+import com.ddona.music_download_ms3_tunk.ui.fragment.DownloadedFragment
 import com.ddona.music_download_ms3_tunk.ui.fragment.MyMusicFragment
 import com.ddona.music_download_ms3_tunk.viewmodel.SongViewModel
 import com.example.newsapp.fragments.FavouriteFragment
@@ -51,8 +55,6 @@ class MainActivity : AppCompatActivity() {
     companion object {
         lateinit var binding: ActivityMainBinding
         lateinit var MusicListMA : ArrayList<Data>
-        lateinit var musicListSearch : ArrayList<Data>
-        var search: Boolean = false
         var sortOrder: Int = 0
         val sortingList = arrayOf(MediaStore.Audio.Media.DATE_ADDED + " DESC", MediaStore.Audio.Media.TITLE,
             MediaStore.Audio.Media.SIZE + " DESC")
@@ -65,14 +67,22 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
+
         initializeLayout()
         val navHostFragment =
             supportFragmentManager
                 .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.findNavController()
 
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            if(destination.id == R.id.searchFragment || destination.id == R.id.changeRegionFragment) {
+                binding.bottomNav.visibility = View.GONE
+            } else {
 
-
+                binding.bottomNav.visibility = View.VISIBLE
+            }
+        }
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.homeFragment,
@@ -88,11 +98,6 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNav.setupWithNavController(navController)
 
 
-        lifecycleScope.launch(Dispatchers.IO) {
-            val abc = api.getAllTopListend()
-            Log.d("esrhreherh", "onCreate: $abc")
-
-        }
         if (requestRuntimePermission()) {
             //for retrieving favourites data using shared preferences
             FavouriteFragment.favouriteList = ArrayList()
@@ -120,11 +125,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        if (!PlayerActivity.isPlaying && PlayerActivity.musicService != null) {
-            exitApplication()
-        }
-
-        Log.d("asdasdasbd", "onDestroy")
+        exitApplication()
     }
 
     @RequiresApi(Build.VERSION_CODES.R)
@@ -159,7 +160,6 @@ class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.R)
     @SuppressLint("SetTextI18n")
     private fun initializeLayout(){
-        search = false
         val sortEditor = getSharedPreferences("SORTING", MODE_PRIVATE)
         sortOrder = sortEditor.getInt("sortOrder", 0)
         MusicListMA = getAllAudio()
@@ -224,6 +224,5 @@ class MainActivity : AppCompatActivity() {
         }
         return tempList
     }
-
 
 }
