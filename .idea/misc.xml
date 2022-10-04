@@ -8,8 +8,10 @@
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/drawable/add_option_sheet.xml" value="0.1745" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/drawable/border_color.xml" value="0.1935" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/drawable/border_dialog.xml" value="0.164" />
+        <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/drawable/border_edt.xml" value="0.1355" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/drawable/border_radius.xml" value="0.168" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/drawable/border_search.xml" value="0.164" />
+        <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/drawable/border_song_title.xml" value="0.1355" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/drawable/bottom_navigation_selector.xml" value="0.1265" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/drawable/ic_download_active.xml" value="0.133" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/drawable/ic_home_active.xml" value="0.133" />
@@ -27,47 +29,55 @@
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/drawable/items_tablayout.xml" value="0.192" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/activity_favourite.xml" value="0.18127404873877725" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/activity_main.xml" value="0.264" />
-        <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/activity_player.xml" value="0.2" />
+        <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/activity_player.xml" value="0.1" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/activity_player_off.xml" value="0.13381787088499358" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/activity_playsong.xml" value="0.22395833333333334" />
+        <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/activity_select_country.xml" value="0.20607097050021378" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/activity_splash.xml" value="0.16" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/add_option_btn.xml" value="0.10859375" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/add_option_dialog.xml" value="0.2" />
-        <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/bottom_sheet_add_playlist.xml" value="0.264" />
+        <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/bottom_sheet_add_playlist.xml" value="0.2" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/create_new_playlist_dialog.xml" value="0.264" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/create_playlist_successfully.xml" value="0.15177426250534418" />
+        <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/data_placeholder_layout.xml" value="0.142368533561351" />
+        <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/fragment_change_region.xml" value="0.20607097050021378" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/fragment_downloaded.xml" value="0.1859375" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/fragment_favorite.xml" value="0.14920906370243694" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/fragment_favourite.xml" value="0.20863616930312098" />
-        <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/fragment_home.xml" value="0.1859375" />
+        <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/fragment_home.xml" value="0.2" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/fragment_my_music.xml" value="0.264" />
-        <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/fragment_now_playing.xml" value="0.264" />
+        <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/fragment_now_playing.xml" value="0.2" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/fragment_online_music.xml" value="0.14920906370243694" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/fragment_player.xml" value="0.22826086956521738" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/fragment_playlist.xml" value="0.1373526745240254" />
+        <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/fragment_search.xml" value="0.2" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/fragment_see_all_song.xml" value="0.22826086956521738" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/fragment_see_all_song_by_genre.xml" value="0.175" />
-        <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/fragment_select_country.xml" value="0.144" />
+        <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/fragment_select_country.xml" value="0.25" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/fragment_setting.xml" value="0.1859375" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/fragment_top_download.xml" value="0.1859375" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/fragment_top_listend.xml" value="0.171875" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/image_Slider.xml" value="0.1859375" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/image_container.xml" value="0.1859375" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/image_slider.xml" value="0.264" />
+        <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/item_country.xml" value="0.6" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/item_genre.xml" value="0.264" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/item_player.xml" value="0.22826086956521738" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/item_playlist.xml" value="0.2" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/item_see_all_genres.xml" value="0.176" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/item_top_download.xml" value="0.536" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/item_top_listend.xml" value="0.264" />
-        <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/item_top_listened.xml" value="0.2" />
-        <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/item_top_trending.xml" value="0.4" />
-        <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/items_slider_show.xml" value="0.1" />
+        <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/item_top_listened.xml" value="0.4" />
+        <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/item_top_trending.xml" value="0.75" />
+        <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/items_slider_show.xml" value="0.361863488624052" />
+        <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/loading_dialog.xml" value="0.144" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/music_view.xml" value="0.264" />
+        <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/nav_header.xml" value="0.2" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/layout/notification_layout.xml" value="0.2" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/menu/bottom_navigation_menu.xml" value="0.13489583333333333" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/menu/bottomsheet_more_song.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/menu/nav_menu.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/menu/search_view_menu.xml" value="0.11286874732791792" />
         <entry key="..\:/Users/kanek/AndroidStudioProjects/music-dowloader_ms3_tunk/app/src/main/res/menu/toolbar_menu.xml" value="0.115625" />
       </map>
     </option>

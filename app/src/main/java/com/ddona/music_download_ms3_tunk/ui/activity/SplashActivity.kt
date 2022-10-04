@@ -16,7 +16,7 @@ class SplashActivity : AppCompatActivity() {
         binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding.root)
         lifecycleScope.launch {
-            delay(2000)
+            delay(1000)
             var intent = Intent(this@SplashActivity, MainActivity::class.java)
             startActivity(intent)
             finish()
