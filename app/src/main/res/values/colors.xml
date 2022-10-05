@@ -15,4 +15,5 @@
     <color name="secondSong">#00FF57</color>
     <color name="thresSong">#FF1C1C</color>
     <color name="gray">#414141</color>
+    <color name="background_nowplaying">#1D1D1D</color>
 </resources>
