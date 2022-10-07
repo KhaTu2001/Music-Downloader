@@ -55,6 +55,9 @@ class MainActivity : AppCompatActivity() {
     companion object {
         lateinit var binding: ActivityMainBinding
         lateinit var MusicListMA : ArrayList<Data>
+        var musicListSearch : ArrayList<Data> = ArrayList()
+
+        var search: Boolean = false
         var sortOrder: Int = 0
         val sortingList = arrayOf(MediaStore.Audio.Media.DATE_ADDED + " DESC", MediaStore.Audio.Media.TITLE,
             MediaStore.Audio.Media.SIZE + " DESC")

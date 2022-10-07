@@ -24,7 +24,12 @@
         android:theme="@style/Theme.Music_Download_MS3_TUNK"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
-
+        <activity
+            android:name=".ui.activity.SelectionActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.activity.PlaylistDetailsActivity"
+            android:exported="false" />
         <activity
             android:name=".ui.activity.PlayerActivity"
             android:exported="false" />

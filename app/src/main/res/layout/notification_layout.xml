@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/item_notifi"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+
+    <ImageView
+        android:id="@+id/song_img"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/song_img2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/song_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/song_img"
+        app:layout_constraintTop_toTopOf="@id/song_img"
+        android:layout_marginLeft="26dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/song_named"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Testing"
+            android:textColor="#fff"
+            android:textSize="24dp"
+            android:fontFamily="@font/inter_semibold"
+            android:textStyle="bold"
+            app:layout_constraintBaseline_toBaselineOf="@+id/song_author"
+            app:layout_constraintStart_toStartOf="@+id/song_img" />
+
+        <TextView
+            android:id="@+id/song_author"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Testing is awecome"
+            android:textColor="#fff"
+            android:textSize="16dp"
+            android:fontFamily="@font/inter_semibold"
+            app:layout_constraintStart_toStartOf="@+id/song_img"
+            app:layout_constraintTop_toTopOf="@+id/song_img" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/song_func"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/song_img"
+        app:layout_constraintBottom_toBottomOf="@id/song_img"
+        android:layout_marginLeft="26dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_prev_song"
+            android:layout_marginLeft="48dp"
+            />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_play_song_icon"
+            android:layout_marginLeft="48dp"
+            />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_next_song"
+            android:layout_marginLeft="48dp"
+            />
+
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

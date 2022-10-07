@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/items_song"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/background">
+
+    <LinearLayout
+        android:id="@+id/linearLayout3"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/background"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <LinearLayout
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:orientation="horizontal"
+            android:layout_marginStart="4dp"
+            android:layout_gravity="center_vertical">
+            <TextView
+                android:id="@+id/numerical_order"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1."
+                android:textColor="@color/white"
+                android:textSize="14dp" />
+        </LinearLayout>
+
+<androidx.cardview.widget.CardView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+
+    app:cardCornerRadius="8dp">
+
+    <ImageView
+        android:id="@+id/song_img"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:src="@drawable/song_img"
+        android:scaleType="fitXY"/>
+</androidx.cardview.widget.CardView>
+
+
+        <LinearLayout
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="12dp"
+            android:orientation="vertical"
+            >
+
+            <TextView
+                android:id="@+id/song_named"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Last "
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:textSize="14dp"
+                android:fontFamily="@font/inter_semibold"/>
+
+            <TextView
+                android:id="@+id/song_author"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Devon Lane"
+                android:textSize="12dp"
+                android:textColor="@color/white"
+                android:alpha="0.7"
+                android:fontFamily="@font/inter_semibold"/>
+
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/song_option"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="16dp"
+                android:src="@drawable/ic_song_option"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:padding="10dp"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </LinearLayout>
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="172dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginBottom="80dp"
+    android:background="@color/background">
+
+    <LinearLayout
+        android:id="@+id/ln1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@drawable/border_dialog">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Create new playlist"
+            android:textColor="@color/white"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:textSize="14dp"
+            android:textStyle="bold"/>
+
+        <EditText
+            android:id="@+id/edt_name_playlist"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:inputType="text|textNoSuggestions"
+            android:hint="Playlist Name"
+            android:textColor="@color/white"
+            android:textSize="12dp"
+            android:textColorHint="@color/white"
+            android:alpha="0.5"
+            android:gravity="center"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp"
+            android:background="@drawable/border_edt"/>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:paddingBottom="16dp"
+            android:layout_gravity="center_horizontal">
+
+            <TextView
+                android:id="@+id/create_playlist_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CREATE"
+                android:textColor="@color/create_playlist_btn"
+                android:textSize="14dp"
+                android:fontFamily="@font/inter_semibold"
+                app:layout_constraintEnd_toStartOf="@id/cancel_btn"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+               />
+
+            <TextView
+                android:id="@+id/cancel_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CANCEL"
+                android:textColor="@color/white"
+                android:alpha="0.5"
+                android:textSize="14dp"
+                android:fontFamily="@font/inter_semibold"
+                app:layout_constraintStart_toEndOf="@+id/create_playlist_btn"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

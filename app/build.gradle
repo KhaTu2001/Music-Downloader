@@ -58,6 +58,8 @@ dependencies {
     // Kotlin Extensions and Coroutines support for Room
     implementation "androidx.room:room-ktx:2.4.2"
 
+    //Stroke Takeview
+    // implementation 'com.github.Maggie-Wan:StrokTextView:v1.0'
 
     // Coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1'
