@@ -1,55 +1,75 @@
 package com.ddona.music_download_ms3_tunk.ui.fragment
 
 import android.os.Bundle
-
+import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import com.ddona.music_download_ms3_tunk.R
-import com.ddona.music_download_ms3_tunk.adapter.PlaylistViewAdapter
-import com.ddona.music_download_ms3_tunk.callback.SongItemClick
+import com.ddona.music_download_ms3_tunk.adapter.PlaylistAdapter
 import com.ddona.music_download_ms3_tunk.databinding.CreateNewPlaylistDialogBinding
 import com.ddona.music_download_ms3_tunk.databinding.FragmentMyMusicBinding
-import com.ddona.music_download_ms3_tunk.model.MusicPlaylist
-import com.ddona.music_download_ms3_tunk.model.Playlist
+import com.ddona.music_download_ms3_tunk.model.playlistMusic
+import com.ddona.music_download_ms3_tunk.user_case.UseCases
+import com.ddona.music_download_ms3_tunk.viewmodel.SongViewModel
 import com.example.newsapp.fragments.FavouriteFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.*
+import javax.inject.Inject
 
 
-class MyMusicFragment: Fragment(),SongItemClick{
+@AndroidEntryPoint
+class MyMusicFragment : Fragment() {
+    @Inject
+    lateinit var usercase: UseCases
 
-    private lateinit var binding: FragmentMyMusicBinding
-    private lateinit var adapter: PlaylistViewAdapter
+    val viewModel: SongViewModel by activityViewModels()
 
     companion object{
-        var musicPlaylist: MusicPlaylist = MusicPlaylist()
-
+         lateinit var binding: FragmentMyMusicBinding
     }
+
+    private lateinit var adapter: PlaylistAdapter
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
+
         binding = FragmentMyMusicBinding.inflate(inflater)
         binding.fvCountSong.text = FavouriteFragment.favouriteList.size.toString() + " Songs"
-        binding.lnAddToFavorite.setOnClickListener{
-//            val intent = Intent(context, FavouriteFragment::class.java)
 
-        }
         binding.rvPlaylist.setHasFixedSize(true)
-        adapter = PlaylistViewAdapter(requireContext(), playlistList = musicPlaylist.ref,false,null)
+
+        adapter = PlaylistAdapter(requireContext(),usercase,false,null)
+
+        lifecycleScope.launch(Dispatchers.IO){
+            viewModel.getAllPlaylist().collect {
+                withContext(Dispatchers.Main) {
+                    adapter.submitList(it)
+
+                    binding.shimmerViewContainer.stopShimmerAnimation()
+                    binding.shimmerViewContainer.visibility = View.GONE
+                    binding.rvPlaylist.visibility = View.VISIBLE
+                }
+            }
+        }
         binding.rvPlaylist.adapter = adapter
+
 
         binding.lnAddToFavorite.setOnClickListener {
             val action = PlaylistFragmentDirections.actionPlaylistFragmentToFavouriteFragment()
             Navigation.findNavController(binding.root).navigate(action)
         }
 
-        binding.lnCreatePlaylist.setOnClickListener{
+        binding.lnCreatePlaylist.setOnClickListener {
             customAlertDialog()
         }
         return binding.root
@@ -59,9 +79,11 @@ class MyMusicFragment: Fragment(),SongItemClick{
         val customDialog = LayoutInflater.from(context)
             .inflate(R.layout.create_new_playlist_dialog, binding.root, false)
         val binder = CreateNewPlaylistDialogBinding.bind(customDialog)
-        val builder = context?.let { MaterialAlertDialogBuilder(it) }
-        val dialog = builder?.setView(customDialog)
-            ?.create()
+        val builder = MaterialAlertDialogBuilder(requireContext(), R.style.full_screen_dialog)
+        val dialog = builder.setView(customDialog)
+            .create()
+
+
         val playlistName = binder.edtNamePlaylist.text
         val submitBtn = binder.createPlaylistBtn
         val cancelBtn = binder.cancelBtn
@@ -70,43 +92,66 @@ class MyMusicFragment: Fragment(),SongItemClick{
                 if (playlistName.isNotEmpty()) {
                     addPlaylist(playlistName.toString())
                 }
-            dialog?.dismiss()
+            dialog.dismiss()
         }
 
         cancelBtn.setOnClickListener {
-            dialog?.dismiss()
+            dialog.dismiss()
         }
 
-        dialog?.show()
+        dialog.show()
 
     }
 
-    private fun addPlaylist(name: String){
+    private fun addPlaylist(name: String) {
         var playlistExists = false
-        for(i in musicPlaylist.ref) {
-            if (name == i.name){
+        for (i in PlaylistAdapter.playlistList) {
+            if (name == i.playlistName) {
                 playlistExists = true
                 break
             }
         }
-        if(playlistExists) Toast.makeText(context, "Playlist Exist!!", Toast.LENGTH_SHORT).show()
+        if (playlistExists) Toast.makeText(context, "Playlist Exist!!", Toast.LENGTH_SHORT).show()
         else {
-            val tempPlaylist = Playlist()
-            tempPlaylist.name = name
-            tempPlaylist.playlist = ArrayList()
-            musicPlaylist.ref.add(tempPlaylist)
-            adapter.refreshPlaylist()
+
+            val tempPlaylist = playlistMusic(
+                playlistName = name, playList_ID = null
+            )
+
+            lifecycleScope.launch {
+                usercase.addPlaylist.invoke(tempPlaylist)
+            }
+
+
+            val customDialogsuccess = LayoutInflater.from(context)
+                .inflate(R.layout.create_playlist_successfully, binding.root, false)
+            val build = MaterialAlertDialogBuilder(requireContext(), R.style.full_screen_dialog)
+            val dialogsuccess = build.setView(customDialogsuccess)
+                .create()
+
+            dialogsuccess.show()
+            dialogsuccess.window?.setGravity(Gravity.TOP)
+
+            MainScope().launch {
+                delay(1000)
+                dialogsuccess.dismiss()
+            }
+
         }
     }
+
 
     override fun onResume() {
         super.onResume()
         adapter.notifyDataSetChanged()
+
+        binding.shimmerViewContainer.startShimmerAnimation()
+        if (binding.shimmerViewContainer.visibility == View.GONE)
+            binding.rvPlaylist.visibility = View.VISIBLE
     }
 
-    override fun addToPlaylist() {
-        TODO("Not yet implemented")
-    }
+
+
 }
 
 

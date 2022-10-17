@@ -8,11 +8,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
-import android.view.Menu
 import android.view.View
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
-import androidx.appcompat.widget.SearchView
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -25,17 +23,15 @@ import androidx.navigation.ui.setupWithNavController
 import com.ddona.music_download_ms3_tunk.R
 import com.ddona.music_download_ms3_tunk.api.SongApi
 import com.ddona.music_download_ms3_tunk.databinding.ActivityMainBinding
-import com.ddona.music_download_ms3_tunk.model.Data
-import com.ddona.music_download_ms3_tunk.model.MusicPlaylist
-import com.ddona.music_download_ms3_tunk.model.exitApplication
-import com.ddona.music_download_ms3_tunk.ui.fragment.DownloadedFragment
-import com.ddona.music_download_ms3_tunk.ui.fragment.MyMusicFragment
+import com.ddona.music_download_ms3_tunk.model.*
+import com.ddona.music_download_ms3_tunk.ui.fragment.ChangeRegionFragment
+import com.ddona.music_download_ms3_tunk.user_case.UseCases
 import com.ddona.music_download_ms3_tunk.viewmodel.SongViewModel
 import com.example.newsapp.fragments.FavouriteFragment
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
@@ -47,20 +43,26 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
 
+
     @Inject
     lateinit var api: SongApi
+
+    @Inject
+    lateinit var useCases: UseCases
 
     val viewModel: SongViewModel by viewModels()
 
     companion object {
         lateinit var binding: ActivityMainBinding
-        lateinit var MusicListMA : ArrayList<Data>
-        var musicListSearch : ArrayList<Data> = ArrayList()
+        lateinit var MusicListMA: ArrayList<Data>
+        var musicListSearch: ArrayList<Data> = ArrayList()
 
         var search: Boolean = false
         var sortOrder: Int = 0
-        val sortingList = arrayOf(MediaStore.Audio.Media.DATE_ADDED + " DESC", MediaStore.Audio.Media.TITLE,
-            MediaStore.Audio.Media.SIZE + " DESC")
+        val sortingList = arrayOf(
+            MediaStore.Audio.Media.DATE_ADDED + " DESC", MediaStore.Audio.Media.TITLE,
+            MediaStore.Audio.Media.SIZE + " DESC"
+        )
 
     }
 
@@ -70,16 +72,30 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
-
         initializeLayout()
+
         val navHostFragment =
             supportFragmentManager
                 .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+
+
+        val inflater = navHostFragment.navController.navInflater
+        val graph = inflater.inflate(R.navigation.main_graph)
+
+        viewModel.isConnected.observe(this) {
+            lifecycleScope.launch {
+                delay(1000)
+                if (it == false) {
+
+                }
+            }
+
+        }
+
         navController = navHostFragment.findNavController()
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            if(destination.id == R.id.searchFragment || destination.id == R.id.changeRegionFragment) {
+            if (destination.id == R.id.searchFragment || destination.id == R.id.changeRegionFragment) {
                 binding.bottomNav.visibility = View.GONE
             } else {
 
@@ -108,19 +124,28 @@ class MainActivity : AppCompatActivity() {
             val jsonString = editor.getString("FavouriteSongs", null)
             val typeToken = object : TypeToken<ArrayList<Data>>() {}.type
             if (jsonString != null) {
-                val data: ArrayList<Data> = GsonBuilder().create().fromJson(jsonString, typeToken)
+                val data: ArrayList<Data> =
+                    GsonBuilder().create().fromJson(jsonString, typeToken)
                 FavouriteFragment.favouriteList.addAll(data)
             }
-            MyMusicFragment.musicPlaylist = MusicPlaylist()
-            val jsonStringPlaylist = editor.getString("MusicPlaylist", null)
-            if (jsonStringPlaylist != null) {
-                val dataPlaylist: MusicPlaylist =
-                    GsonBuilder().create().fromJson(jsonStringPlaylist, MusicPlaylist::class.java)
-                MyMusicFragment.musicPlaylist = dataPlaylist
-            }
-        }
-    }
 
+
+            val pref = getSharedPreferences("COUNTRY", MODE_PRIVATE)
+            val data1 = pref.getString("id_country", null)
+            val data2 = pref.getString("name_country", null)
+            val data3 = pref.getInt("flag_country", R.drawable.ic_language_select)
+            if (data1 != null && data2 != null) {
+                ChangeRegionFragment.id_country = data1
+                ChangeRegionFragment.name_country = data2
+                ChangeRegionFragment.flag_country = data3
+
+            }
+
+
+        }
+
+
+    }
 
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
@@ -138,9 +163,9 @@ class MainActivity : AppCompatActivity() {
         val editor = getSharedPreferences("FAVOURITES", MODE_PRIVATE).edit()
         val jsonString = GsonBuilder().create().toJson(FavouriteFragment.favouriteList)
         editor.putString("FavouriteSongs", jsonString)
-        val jsonStringPlaylist = GsonBuilder().create().toJson(MyMusicFragment.musicPlaylist)
-        editor.putString("MusicPlaylist", jsonStringPlaylist)
         editor.apply()
+
+
 
     }
 
@@ -160,9 +185,10 @@ class MainActivity : AppCompatActivity() {
         }
         return true
     }
+
     @RequiresApi(Build.VERSION_CODES.R)
     @SuppressLint("SetTextI18n")
-    private fun initializeLayout(){
+    private fun initializeLayout() {
         val sortEditor = getSharedPreferences("SORTING", MODE_PRIVATE)
         sortOrder = sortEditor.getInt("sortOrder", 0)
         MusicListMA = getAllAudio()
@@ -195,37 +221,63 @@ class MainActivity : AppCompatActivity() {
         if (cursor != null) {
             if (cursor.moveToFirst())
                 do {
-                    val albumId = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID))?:"Unknown"
-                    val albumName = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM))?:"Unknown"
-                    val artistId = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST_ID))?:"Unknown"
-                    val artistName = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST))?:"Unknown"
-                    val audio = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA))?:"Unknown"
-                    val audioDownload = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.IS_DOWNLOAD))?:"Unknown"
-                    val name = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE))?:"Unknown"
-                    val id = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media._ID))?:"Unknown"
-                    val duration = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))
-                    val albumIdC = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)).toString()
+                    val albumId =
+                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID))
+                            ?: "Unknown"
+                    val albumName =
+                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM))
+                            ?: "Unknown"
+                    val artistId =
+                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST_ID))
+                            ?: "Unknown"
+                    val artistName =
+                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST))
+                            ?: "Unknown"
+                    val audio = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA))
+                        ?: "Unknown"
+                    val audioDownload =
+                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.IS_DOWNLOAD))
+                            ?: "Unknown"
+                    val name = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE))
+                        ?: "Unknown"
+                    val id = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media._ID))
+                        ?: "Unknown"
+                    val duration =
+                        cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))
+                    val albumIdC =
+                        cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID))
+                            .toString()
                     val uri = Uri.parse("content://media/external/audio/albumart")
                     val image = Uri.withAppendedPath(uri, albumIdC).toString()
                     val music = Data(
-                         albumId =albumId,
-                     albumName =albumName,
-                     artistId = artistId,
-                     artistName = artistName,
-                     audio = audio,
-                     audioDownload =audioDownload,
-                     duration =  duration,
-                     id = id,
-                     image = image ,
-                     name = name,
+                        albumId = albumId,
+                        albumName = albumName,
+                        artistId = artistId,
+                        artistName = artistName,
+                        audio = audio,
+                        audioDownload = audioDownload,
+                        duration = duration,
+                        id = id,
+                        image = image,
+                        name = name,
                     )
                     val file = File(music.audio)
-                    if(file.exists())
+                    if (file.exists())
                         tempList.add(music)
-                }while (cursor.moveToNext())
-                cursor.close()
+                } while (cursor.moveToNext())
+            cursor.close()
         }
         return tempList
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        val pref = getSharedPreferences("COUNTRY", MODE_PRIVATE).edit()
+        pref.putString("id_country", ChangeRegionFragment.id_country)
+        pref.putString("name_country", ChangeRegionFragment.name_country)
+        pref.putInt("flag_country", ChangeRegionFragment.flag_country)
+        pref.apply()
     }
 
 }

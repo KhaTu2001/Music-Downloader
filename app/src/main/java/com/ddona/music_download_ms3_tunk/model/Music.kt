@@ -3,22 +3,13 @@ package com.ddona.music_download_ms3_tunk.model
 import com.ddona.music_download_ms3_tunk.R
 import com.ddona.music_download_ms3_tunk.ui.activity.PlayerActivity
 import com.ddona.music_download_ms3_tunk.ui.activity.PlayerActivity.Companion.musicService
-import com.ddona.music_download_ms3_tunk.ui.fragment.MyMusicFragment
+import com.ddona.music_download_ms3_tunk.ui.activity.PlayerActivity.Companion.repeatOneSong
 import com.ddona.music_download_ms3_tunk.ui.fragment.NowPlaying
 import com.example.newsapp.fragments.FavouriteFragment
 import java.io.File
 import java.util.concurrent.TimeUnit
 import kotlin.system.exitProcess
 
-
-class Playlist {
-    lateinit var name: String
-    lateinit var playlist: ArrayList<Data>
-}
-
-class MusicPlaylist {
-    var ref: ArrayList<Playlist> = ArrayList()
-}
 
 fun formatDuration(duration: Long): String {
     val minutes = TimeUnit.MINUTES.convert(duration, TimeUnit.MILLISECONDS)
@@ -75,7 +66,7 @@ fun setSongPosition(increment: Boolean, isClickNextPrev: Boolean) {
 }
 
 fun shufferPosition(isShuffer:Boolean){
-    if(isShuffer){
+    if(isShuffer && !repeatOneSong){
         PlayerActivity.musicList.shuffle()
     }
     else{

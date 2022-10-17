@@ -14,15 +14,21 @@ import com.ddona.music_download_ms3_tunk.adapter.TopListAdapter
 import com.ddona.music_download_ms3_tunk.callback.ListenedSongItemClick
 import com.ddona.music_download_ms3_tunk.databinding.FragmentSeeAllSongByGenreBinding
 import com.ddona.music_download_ms3_tunk.model.Data
-import com.ddona.music_download_ms3_tunk.ui.activity.MainActivity
 import com.ddona.music_download_ms3_tunk.ui.activity.PlayerActivity
+import com.ddona.music_download_ms3_tunk.user_case.UseCases
 import com.ddona.music_download_ms3_tunk.viewmodel.SongViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class SeeAllSongByGenreFragment : Fragment(),ListenedSongItemClick {
 
     val viewModel: SongViewModel by activityViewModels()
+
+    @Inject
+    lateinit var usercase: UseCases
     companion object{
         var topListSongByGenre: ArrayList<Data> = ArrayList()
         private lateinit var binding: FragmentSeeAllSongByGenreBinding
@@ -35,11 +41,13 @@ class SeeAllSongByGenreFragment : Fragment(),ListenedSongItemClick {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
+
         var keysearch = args.keysearch
         var nameGenre = args.nameGenre
         binding = FragmentSeeAllSongByGenreBinding.inflate(inflater)
         binding.topTextview.text = nameGenre
-        val tladapter = TopListAdapter(requireContext(),this)
+        val tladapter = TopListAdapter(requireContext(),this,usercase)
         binding.rvSeeAllSong.layoutManager =
             LinearLayoutManager(context, RecyclerView.VERTICAL, false)
         binding.rvSeeAllSong.adapter = tladapter
@@ -51,6 +59,14 @@ class SeeAllSongByGenreFragment : Fragment(),ListenedSongItemClick {
             tladapter.submitList(it)
             topListSongByGenre.clear()
             topListSongByGenre.addAll(it)
+
+
+            binding.shimmerViewContainer.stopShimmerAnimation()
+            binding.shimmerViewContainer.visibility = View.GONE
+
+            binding.rvSeeAllSong.visibility = View.VISIBLE
+
+
         }
 
         return binding.root
@@ -62,6 +78,16 @@ class SeeAllSongByGenreFragment : Fragment(),ListenedSongItemClick {
         intent.putExtra("listSong",topListSongByGenre)
         intent.putExtra("from","Genres")
         startActivity(intent)
+    }
+
+
+
+    override fun onResume() {
+        super.onResume()
+        binding.shimmerViewContainer.startShimmerAnimation()
+        if (binding.shimmerViewContainer.visibility == View.GONE)
+            binding.rvSeeAllSong.visibility = View.VISIBLE
+
     }
 
 

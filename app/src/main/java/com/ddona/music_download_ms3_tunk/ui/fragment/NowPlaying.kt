@@ -2,6 +2,8 @@ package com.ddona.music_download_ms3_tunk.ui.fragment
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,11 +23,15 @@ class NowPlaying : Fragment() {
         lateinit var binding: FragmentNowPlayingBinding
     }
 
+    private lateinit var runnable: Runnable
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
         val view = inflater.inflate(R.layout.fragment_now_playing, container, false)
         binding = FragmentNowPlayingBinding.bind(view)
         binding.root.visibility = View.INVISIBLE
@@ -38,17 +44,16 @@ class NowPlaying : Fragment() {
                 musicService!!.audioManager.abandonAudioFocus(musicService)
                 musicService!!.stopForeground(true)
                 musicService!!.mediaPlayer!!.stop()
-                musicService = null
                 binding.root.visibility = View.GONE
+                HomeFragment.binding.nowPlaying.visibility = View.GONE
             }
         }
 
 
-        binding.root.setOnClickListener {
+        binding.constraint.setOnClickListener {
             val intent = Intent(requireContext(), PlayerActivity::class.java)
             intent.putExtra("index", PlayerActivity.songPosition)
             intent.putExtra("from", "NowPlaying")
-            //  intent.putExtra("listSong", PlayerActivity.musicList)
             ContextCompat.startActivity(requireContext(), intent, null)
         }
 
@@ -56,7 +61,8 @@ class NowPlaying : Fragment() {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 if(fromUser) {
                     musicService!!.mediaPlayer!!.seekTo(progress)
-                    musicService!!.showNotification(if(PlayerActivity.isPlaying) R.drawable.ic_pause_song_icon else R.drawable.ic_play_song_icon)
+                    musicService!!.showNotification(if (PlayerActivity.isPlaying) R.drawable.ic_pause_song_icon else R.drawable.ic_play_song_icon)
+
                 }
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
@@ -71,11 +77,20 @@ class NowPlaying : Fragment() {
 
     override fun onResume() {
         super.onResume()
+
+
         if (musicService != null) {
             binding.root.visibility = View.VISIBLE
             binding.seekBar.progress = musicService!!.mediaPlayer!!.currentPosition.toFloat().toInt()
             binding.seekBar.max = musicService!!.mediaPlayer!!.duration.toFloat().toInt()
-            musicService!!.seekBarSetup()
+
+            runnable = Runnable {
+                binding.seekBar.progress = musicService!!.mediaPlayer!!.currentPosition
+                Handler(Looper.getMainLooper()).postDelayed(runnable, 200)
+            }
+
+            Handler(Looper.getMainLooper()).postDelayed(runnable, 0)
+
             binding.songNamed.isSelected = true
             binding.authorName.isSelected = true
             Glide.with(requireContext())
@@ -94,7 +109,7 @@ class NowPlaying : Fragment() {
 
      private fun playMusic() {
         PlayerActivity.isPlaying = true
-        musicService!!.mediaPlayer!!.start()
+         musicService!!.mediaPlayer!!.start()
         binding.PlaypauseBtnNP.setImageResource(R.drawable.ic_pause_song_icon)
         musicService!!.showNotification(R.drawable.ic_pause_song_icon)
     }

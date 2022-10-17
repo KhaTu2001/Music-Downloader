@@ -1,9 +1,7 @@
 package com.ddona.music_download_ms3_tunk.fr
 
-import android.R
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,16 +13,22 @@ import com.ddona.music_download_ms3_tunk.callback.ListenedSongItemClick
 import com.ddona.music_download_ms3_tunk.databinding.FragmentSearchBinding
 import com.ddona.music_download_ms3_tunk.model.Data
 import com.ddona.music_download_ms3_tunk.ui.activity.PlayerActivity
+import com.ddona.music_download_ms3_tunk.user_case.UseCases
 import com.ddona.music_download_ms3_tunk.viewmodel.SongViewModel
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
+@AndroidEntryPoint
 class SearchFragment : Fragment(), ListenedSongItemClick {
     val viewModel: SongViewModel by activityViewModels()
+
+
+    @Inject
+    lateinit var usercase: UseCases
 
     companion object{
         var searchListMA:ArrayList<Data> = ArrayList()
@@ -38,7 +42,7 @@ class SearchFragment : Fragment(), ListenedSongItemClick {
     ): View {
         binding = FragmentSearchBinding.inflate(inflater)
 
-        val adapter = TopListAdapter(requireContext(), this)
+        val adapter = TopListAdapter(requireContext(),this,usercase)
         binding.rvSearch.adapter = adapter
         var job: Job? = null
         binding.edtSearch.addTextChangedListener { editable ->
@@ -55,10 +59,15 @@ class SearchFragment : Fragment(), ListenedSongItemClick {
 
         viewModel.searchList.observe(viewLifecycleOwner) {
             adapter.submitList(it)
+            if(it == null){
+                binding.rvSearch.visibility = View.GONE
+                binding.txtNodata.visibility = View.VISIBLE
+            }
             searchListMA.addAll(it)
-            Log.d("abdad", "onCreateView:$searchListMA ")
         }
         return binding.root
+
+
     }
 
 
@@ -68,4 +77,5 @@ class SearchFragment : Fragment(), ListenedSongItemClick {
         intent.putExtra("from", "SearchFragment")
         startActivity(intent)
     }
+
 }

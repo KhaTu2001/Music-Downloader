@@ -7,48 +7,55 @@ import android.content.ServiceConnection
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.media.audiofx.LoudnessEnhancer
-import android.net.Uri
 import android.os.Bundle
 import android.os.IBinder
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
-import android.view.animation.AnimationUtils
+import android.view.animation.LinearInterpolator
+import android.widget.EditText
+import android.widget.SearchView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.ddona.music_download_ms3_tunk.R
-import com.ddona.music_download_ms3_tunk.adapter.PlaylistViewAdapter
+import com.ddona.music_download_ms3_tunk.adapter.PlaylistAdapter
+import com.ddona.music_download_ms3_tunk.callback.ListSongItemClick
 import com.ddona.music_download_ms3_tunk.databinding.ActivityPlayerBinding
 import com.ddona.music_download_ms3_tunk.databinding.CreateNewPlaylistDialogBinding
 import com.ddona.music_download_ms3_tunk.fr.SearchFragment
 import com.ddona.music_download_ms3_tunk.model.*
 import com.ddona.music_download_ms3_tunk.service.MusicService
 import com.ddona.music_download_ms3_tunk.ui.fragment.*
-import com.ddona.music_download_ms3_tunk.viewmodel.SongViewModel
+import com.ddona.music_download_ms3_tunk.user_case.UseCases
 import com.example.newsapp.fragments.FavouriteFragment
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import me.tankery.lib.circularseekbar.CircularSeekBar
+import java.lang.Runnable
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCompletionListener {
-    val viewModel: SongViewModel by viewModels()
+class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCompletionListener,
+    ListSongItemClick,
+    Runnable {
+
+    @Inject
+    lateinit var usercase: UseCases
+
+
     var Offline: Boolean = false
     var playoneTime: Boolean = false
-    private lateinit var adapter: PlaylistViewAdapter
     private lateinit var bottomSheet2: BottomSheetDialog
-    private  var music : Data? = null
+    private lateinit var adapter: PlaylistAdapter
 
     companion object {
         lateinit var musicList: ArrayList<Data>
@@ -59,7 +66,6 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         var isShuffer: Boolean = false
         var isFavourite: Boolean = false
         var fIndex: Int = -1
-        var PlaylistIndex: Int = -1
 
 
         var isClickNextPrev = false
@@ -75,22 +81,21 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         super.onCreate(savedInstanceState)
         binding = ActivityPlayerBinding.inflate(layoutInflater)
 
+        adapter = PlaylistAdapter(this, usercase, true, this)
 
-
+        lifecycleScope.launch() {
+            usercase.getAllPlaylist().collect {
+                adapter.submitList(it)
+            }
+        }
 
         initializeLayout()
 
-        music = musicList[songPosition]
-
-        adapter = PlaylistViewAdapter(
-            this, playlistList = MyMusicFragment.musicPlaylist.ref, true,music)
-
-        bottomSheet2 = BottomSheetDialog(this)
+        bottomSheet2 = BottomSheetDialog(this, R.style.BottomSheetStyle)
         bottomSheet2.setContentView(R.layout.bottom_sheet_add_playlist)
         val binder = bottomSheet2.findViewById<RecyclerView>(R.id.rv_new_playlist)
         binder?.setHasFixedSize(true)
         binder?.adapter = adapter
-
 
         setContentView(binding.root)
 
@@ -110,10 +115,17 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
                 isFavourite = false
                 binding.addToFavorite.setImageResource(R.drawable.ic_add_to_favorite)
                 FavouriteFragment.favouriteList.removeAt(fIndex)
+                Toast.makeText(
+                    this,
+                    "Song Remove from Favourite successfully!!",
+                    Toast.LENGTH_SHORT
+                ).show()
             } else {
                 isFavourite = true
                 binding.addToFavorite.setImageResource(R.drawable.ic_add_to_favorite_active)
                 FavouriteFragment.favouriteList.add(musicList[songPosition])
+                Toast.makeText(this, "Song added to Favourite successfully!!", Toast.LENGTH_SHORT)
+                    .show()
             }
             FavouriteFragment.favouritesChanged = true
         }
@@ -121,9 +133,9 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         binding.shareSong.setOnClickListener {
             val shareIntent = Intent()
             shareIntent.action = Intent.ACTION_SEND
-            shareIntent.type = "audio/*"
-            shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(musicList[songPosition].audio))
-            startActivity(Intent.createChooser(shareIntent, "Sharing Music File!!"))
+            shareIntent.setType("text/plain")
+            shareIntent.putExtra(Intent.EXTRA_TEXT, musicList[songPosition].audio)
+            startActivity(Intent.createChooser(shareIntent, "Sharing Music Link!!"))
         }
 
         binding.playPauseBtn.setOnClickListener {
@@ -150,6 +162,8 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
             } else if (repeat && !repeatOneSong) {
                 binding.repeatBtn.setImageResource(R.drawable.ic_loop_onetime)
                 repeatOneSong = true
+
+
             } else {
                 binding.repeatBtn.setImageResource(R.drawable.ic_loop_song_inactive)
                 repeat = false
@@ -174,20 +188,14 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
             }
 
             override fun onStopTrackingTouch(seekBar: CircularSeekBar?) = Unit
-
             override fun onStartTrackingTouch(seekBar: CircularSeekBar?) = Unit
         })
 
         binding.addToPlaylist.setOnClickListener {
             showAddToPlaylistBottomSheet()
         }
+        startAnimationRotate()
 
-
-    }
-
-    override fun onStart() {
-        super.onStart()
-        Log.d("zzzzzw", "onStart")
     }
 
     private fun initializeLayout() {
@@ -213,15 +221,14 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
             "FavouriteAdapter" -> initServiceAndPlaylist(FavouriteFragment.favouriteList)
             "MusicAdapter" -> initServiceAndPlaylist(MainActivity.MusicListMA)
             "SearchFragment" -> initServiceAndPlaylist(SearchFragment.searchListMA)
-
-
+            "playlistDetails" -> intent.getParcelableArrayListExtra<Data>("dataMusic")
+                ?.let { initServiceAndPlaylist(it) }
         }
         if (musicService != null && !isPlaying) playMusic()
 
     }
 
     private fun setLayout() {
-        Log.d("zzzzzw", "$songPosition")
 
         fIndex = favouriteChecker(musicList[songPosition].id)
         Glide.with(applicationContext)
@@ -239,6 +246,8 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         binding.songNamed.text = musicList[songPosition].name
         binding.authorName.text = musicList[songPosition].artistName
 
+
+
         if (isShuffer) binding.shufferBtn.setImageResource(R.drawable.ic_shuffer_song_active)
         else binding.shufferBtn.setImageResource(R.drawable.ic_shuffer_song_inactive)
 
@@ -247,7 +256,9 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
 
         if (repeat) binding.repeatBtn.setImageResource(R.drawable.ic_loop_song)
 
-        if (repeat && repeatOneSong) binding.repeatBtn.setImageResource(R.drawable.ic_loop_onetime)
+        if (repeat && repeatOneSong) {
+            binding.repeatBtn.setImageResource(R.drawable.ic_loop_onetime)
+        }
 
         if (!repeat && !repeatOneSong) binding.repeatBtn.setImageResource(R.drawable.ic_loop_song_inactive)
 
@@ -271,7 +282,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
             musicService!!.mediaPlayer!!.setOnCompletionListener(this)
             nowPlayingId = musicList[songPosition].id
             playMusic()
-            animationRotate(true)
+            startAnimationRotate()
             if (musicList.size - 1 == songPosition && playoneTime) {
                 pauseMusic()
             }
@@ -284,12 +295,24 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
     }
 
 
-    private fun animationRotate(isPlaying: Boolean) {
-        val anim = AnimationUtils.loadAnimation(this, R.anim.rotate_song_img)
-        anim.fillAfter = true
+    private fun startAnimationRotate() {
+        binding.songImg.animate().rotationBy(360F).withEndAction(this).setDuration(5000)
+            .setInterpolator(LinearInterpolator()).start()
+
+    }
+
+    private fun stopAnimation() {
+        binding.songImg.animate().cancel()
+    }
+
+    override fun run() {
         if (isPlaying) {
-            anim.start()
+            binding.songImg.animate().rotationBy(360F).withEndAction(this).setDuration(5000)
+                .setInterpolator(LinearInterpolator()).start()
+        } else {
+            binding.songImg.animate().cancel()
         }
+
 
     }
 
@@ -297,6 +320,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
     private fun playMusic() {
         binding.playPauseBtn.setImageResource(R.drawable.ic_pause_song)
         isPlaying = true
+        startAnimationRotate()
         musicService!!.mediaPlayer!!.start()
         musicService!!.showNotification(R.drawable.ic_pause_song_icon)
     }
@@ -304,6 +328,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
     private fun pauseMusic() {
         binding.playPauseBtn.setImageResource(R.drawable.ic_play_pause_song)
         isPlaying = false
+        stopAnimation()
         musicService!!.mediaPlayer!!.pause()
         musicService!!.showNotification(R.drawable.ic_play_song_icon)
     }
@@ -345,6 +370,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
             setLayout()
             createMediaPlayer()
         }
+
 
     }
 
@@ -459,11 +485,20 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
                 isFavourite = false
                 binding.addToFavorite.setImageResource(R.drawable.ic_add_to_favorite)
                 FavouriteFragment.favouriteList.removeAt(fIndex)
+                Toast.makeText(
+                    this,
+                    "Song Remove from Favourite successfully!!",
+                    Toast.LENGTH_SHORT
+                ).show()
+
 
             } else {
                 isFavourite = true
                 binding.addToFavorite.setImageResource(R.drawable.ic_add_to_favorite_active)
                 FavouriteFragment.favouriteList.add(musicList[songPosition])
+                Toast.makeText(this, "Song added to Favourite successfully!!", Toast.LENGTH_SHORT)
+                    .show()
+
 
             }
             FavouriteFragment.favouritesChanged = true
@@ -481,6 +516,26 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
     fun showAddToPlaylistBottomSheet() {
 
         val createPLBtn = bottomSheet2.findViewById<View>(R.id.ln_create_playlist)
+        val lnSearch = bottomSheet2.findViewById<View>(R.id.ln_search)
+        val searchText =
+            bottomSheet2.findViewById<EditText>(R.id.edt_search)
+
+        var job: Job? = null
+            searchText?.addTextChangedListener { editable ->
+                job?.cancel()
+                job = MainScope().launch {
+                    editable?.let {
+                        if (editable.toString().isNotEmpty()) {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                usercase.getAllPlaylistByName.invoke(editable.toString()).collect {
+                                        adapter.submitList(it)
+                                }
+                            }
+                        }
+                    }
+                }
+        }
+
 
         createPLBtn?.setOnClickListener {
             customAlertDialog()
@@ -495,13 +550,12 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         val customDialog = LayoutInflater.from(this)
             .inflate(R.layout.create_new_playlist_dialog, binding.root, false)
         val binder = CreateNewPlaylistDialogBinding.bind(customDialog)
-        val builder = MaterialAlertDialogBuilder(this)
+        val builder = MaterialAlertDialogBuilder(this, R.style.full_screen_dialog)
         val dialog = builder.setView(customDialog)
             .create()
         val playlistName = binder.edtNamePlaylist.text
         val submitBtn = binder.createPlaylistBtn
         val cancelBtn = binder.cancelBtn
-
 
 
         submitBtn.setOnClickListener {
@@ -525,8 +579,8 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
 
     fun addPlaylist(name: String, context: Context) {
         var playlistExists = false
-        for (i in MyMusicFragment.musicPlaylist.ref) {
-            if (name == i.name) {
+        for (i in PlaylistAdapter.playlistList) {
+            if (name == i.playlistName) {
                 playlistExists = true
                 break
             }
@@ -541,20 +595,44 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
 
         if (playlistExists) Toast.makeText(context, "Playlist Exist!!", Toast.LENGTH_SHORT).show()
         else {
-            val tempPlaylist = Playlist()
-            tempPlaylist.name = name
-            tempPlaylist.playlist = ArrayList()
-            MyMusicFragment.musicPlaylist.ref.add(tempPlaylist)
-            adapter.refreshPlaylist()
+
+            val tempPlaylist = playlistMusic(
+                playlistName = name, playList_ID = null
+            )
+
+            lifecycleScope.launch {
+                usercase.addPlaylist.invoke(tempPlaylist)
+            }
+
 
             dialogsuccess.show()
             dialogsuccess.window?.setGravity(Gravity.TOP)
 
             MainScope().launch {
-                delay(2000)
+                delay(1000)
                 dialogsuccess.dismiss()
             }
         }
+    }
+
+    override fun ListSongOnClick(index: Int) {
+        val music = Data(
+            id = musicList[songPosition].id,
+            albumId = musicList[songPosition].albumId,
+            albumName = musicList[songPosition].albumName,
+            artistId = musicList[songPosition].artistId,
+            audio = musicList[songPosition].audio,
+            artistName = musicList[songPosition].artistName,
+            audioDownload = musicList[songPosition].audioDownload,
+            duration = musicList[songPosition].duration,
+            image = musicList[songPosition].image,
+            name = musicList[songPosition].name,
+            playlist_id = index,
+        )
+        lifecycleScope.launch {
+            usercase.addMusic(music)
+        }
+        Toast.makeText(this, "Song Added successfully!!", Toast.LENGTH_SHORT).show()
     }
 
 

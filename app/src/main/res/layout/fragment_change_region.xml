@@ -30,46 +30,65 @@
         app:layout_constraintTop_toBottomOf="@+id/language_selected" />
 
     <LinearLayout
+        android:id="@+id/ln_search"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="40dp"
+        android:orientation="horizontal"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintTop_toBottomOf="@id/txt_changeRegion"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@drawable/border_edt_search">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_margin="20dp"
+            android:layout_gravity="center"
+            android:background="@drawable/ic_searchsong"
+            android:backgroundTint="@color/white"
+            />
+
+        <EditText
+            android:id="@+id/edt_search"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="Search Country"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:lines="1"
+            android:layout_gravity="center"
+            android:textColor="@color/white"
+            android:background="@android:color/transparent"
+            android:textSize="12sp"
+            android:textColorHint="@color/white"
+            android:alpha="0.5"/>
+
+
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:paddingBottom="65dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txt_changeRegion">
+        app:layout_constraintTop_toBottomOf="@+id/ln_search">
 
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="46dp"
-            android:layout_margin="18dp"
-            android:background="@drawable/border_edt_search"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="10dp"
-                android:src="@drawable/ic_searchsong" />
-
-
-            <EditText
-                android:id="@+id/edt_search_country"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/inter_semibold"
-                android:hint="Search Country"
-                android:textColorHint="#888888" />
-
-        </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_country"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="18dp"
+            android:layout_marginTop="18dp"
+            android:layout_marginStart="6dp"
+            tools:listitem="@layout/item_country"
             android:orientation="vertical"
+            android:scrollbars="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
 

@@ -1,26 +1,33 @@
 package com.ddona.music_download_ms3_tunk.ui.fragment
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.Navigation
+import androidx.appcompat.widget.SearchView
+import androidx.core.widget.addTextChangedListener
 import androidx.navigation.fragment.findNavController
 import com.codingstuff.imageslider.CountryAdapter
 import com.ddona.music_download_ms3_tunk.R
 import com.ddona.music_download_ms3_tunk.callback.CountryItemClick
 import com.ddona.music_download_ms3_tunk.databinding.FragmentChangeRegionBinding
+import com.ddona.music_download_ms3_tunk.fr.SearchFragment
 import com.ddona.music_download_ms3_tunk.model.Country
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 
-class ChangeRegionFragment : Fragment(),CountryItemClick {
+class ChangeRegionFragment : Fragment(), CountryItemClick {
 
     private lateinit var binding: FragmentChangeRegionBinding
     private lateinit var adapter: CountryAdapter
+    var regionListSearch: ArrayList<Country> = ArrayList()
+    var countryList: ArrayList<Country> = ArrayList()
+
 
     companion object {
-        var countryList: ArrayList<Country> = ArrayList()
         var id_country: String = ""
         var name_country: String = ""
         var flag_country: Int = 0
@@ -37,6 +44,22 @@ class ChangeRegionFragment : Fragment(),CountryItemClick {
         binding.rvCountry.setHasFixedSize(true)
         adapter = CountryAdapter(countryList, this)
         binding.rvCountry.adapter = adapter
+
+
+        var job: Job? = null
+        binding.edtSearch.addTextChangedListener { editable ->
+            job?.cancel()
+            regionListSearch = ArrayList()
+            job = MainScope().launch {
+                editable?.let {
+                    for (country in countryList)
+                        if (country.name.lowercase().contains(editable)) {
+                            regionListSearch.add(country)
+                        }
+                    adapter.updateMusicList(regionListSearch)
+                }
+            }
+        }
         return binding.root
     }
 
@@ -58,9 +81,11 @@ class ChangeRegionFragment : Fragment(),CountryItemClick {
         name_country = country.name
         flag_country = country.url
 
+
         val action = ChangeRegionFragmentDirections.actionChangeRegionFragmentToHomeFragment()
         findNavController().navigate(action)
     }
 
 
 }
+

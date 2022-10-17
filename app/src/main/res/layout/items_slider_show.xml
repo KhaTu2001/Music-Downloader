@@ -17,8 +17,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="bottom"
-        android:layout_marginBottom="12dp">
+        android:layout_gravity="bottom">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/ln_textSong"
@@ -56,8 +55,9 @@
                 android:fontFamily="@font/inter_semibold"
                 android:text="Devon Lane"
                 android:textColor="@color/white"
-                android:textSize="12dp"
+                android:textSize="10dp"
                 android:textStyle="normal"
+                android:alpha="0.8"
                 app:layout_constraintTop_toBottomOf="@+id/song_named"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />

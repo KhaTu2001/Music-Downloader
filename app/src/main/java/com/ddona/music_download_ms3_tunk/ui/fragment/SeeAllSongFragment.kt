@@ -2,7 +2,6 @@ package com.ddona.music_download_ms3_tunk.ui.fragment
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -12,17 +11,22 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import com.ddona.music_download_ms3_tunk.adapter.*
 import com.ddona.music_download_ms3_tunk.callback.GenreItemClick
+import com.ddona.music_download_ms3_tunk.callback.ListSongItemClick
 import com.ddona.music_download_ms3_tunk.callback.ListenedSongItemClick
 import com.ddona.music_download_ms3_tunk.databinding.FragmentSeeAllSongBinding
 import com.ddona.music_download_ms3_tunk.model.Data
 import com.ddona.music_download_ms3_tunk.ui.activity.PlayerActivity
+import com.ddona.music_download_ms3_tunk.user_case.UseCases
 import com.ddona.music_download_ms3_tunk.viewmodel.SongViewModel
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-class SeeAllSongFragment : Fragment(), ListenedSongItemClick, GenreItemClick {
+@AndroidEntryPoint
+
+class SeeAllSongFragment : Fragment(), ListenedSongItemClick, GenreItemClick ,ListSongItemClick{
 
     private lateinit var binding: FragmentSeeAllSongBinding
+
     val viewModel: SongViewModel by activityViewModels()
     var topListSong: ArrayList<Data> = ArrayList()
     var downloadListSong: ArrayList<Data> = ArrayList()
@@ -31,6 +35,8 @@ class SeeAllSongFragment : Fragment(), ListenedSongItemClick, GenreItemClick {
         var localListSong:  ArrayList<Data> = ArrayList()
     }
 
+    @Inject
+    lateinit var usercase: UseCases
 
     val args: SeeAllSongFragmentArgs by navArgs()
     override fun onCreateView(
@@ -39,8 +45,6 @@ class SeeAllSongFragment : Fragment(), ListenedSongItemClick, GenreItemClick {
     ): View {
         // Inflate the layout for this fragment
         binding = FragmentSeeAllSongBinding.inflate(inflater)
-
-
 
         if(args.data == 0){
             topTrendingRV()
@@ -63,12 +67,17 @@ class SeeAllSongFragment : Fragment(), ListenedSongItemClick, GenreItemClick {
     }
     private fun topTrendingRV() {
         binding.topTextview.text = "Top Trending"
-        val ttadapter = TopListAdapter(requireContext(),this)
+        val ttadapter = TopListAdapter(requireContext(),this,usercase)
         binding.rvSeeAllSong.setHasFixedSize(true)
         binding.rvSeeAllSong.adapter = ttadapter
         viewModel.topTrending.observe(viewLifecycleOwner) {
             ttadapter.submitList( it)
             trendingListSong.addAll(it)
+
+            binding.shimmerViewContainer.stopShimmerAnimation()
+            binding.shimmerViewContainer.visibility = View.GONE
+
+            binding.rvSeeAllSong.visibility = View.VISIBLE
         }
         localListSong = trendingListSong
     }
@@ -76,36 +85,47 @@ class SeeAllSongFragment : Fragment(), ListenedSongItemClick, GenreItemClick {
     private fun genreRV() {
         binding.topTextview.text = "Genres"
         val gradapter = SeeAllGenreAdapter(this)
-        binding.rvSeeAllSong.setHasFixedSize(true)
-        binding.rvSeeAllSong.layoutManager =
+        binding.rvSeeAllSongGenre.setHasFixedSize(true)
+        binding.rvSeeAllSongGenre.layoutManager =
             GridLayoutManager(context, 2)
-        binding.rvSeeAllSong.adapter = gradapter
+        binding.rvSeeAllSongGenre.adapter = gradapter
         viewModel.listGenre.observe(viewLifecycleOwner) {
             gradapter.submitList(it)
+            binding.shimmerViewContainer.stopShimmerAnimation()
+            binding.shimmerViewContainer.visibility = View.GONE
+
+            binding.rvSeeAllSongGenre.visibility = View.VISIBLE
         }
     }
 
     private fun topDownRV() {
         binding.topTextview.text = "Top Download"
-        val tdadapter = TopListAdapter(requireContext(),this)
+        val tdadapter = TopListAdapter(requireContext(),this,usercase)
         binding.rvSeeAllSong.setHasFixedSize(true)
         binding.rvSeeAllSong.adapter = tdadapter
         viewModel.topDownload.observe(viewLifecycleOwner) {
             tdadapter.submitList( it)
             downloadListSong.addAll(it)
+            binding.shimmerViewContainer.stopShimmerAnimation()
+            binding.shimmerViewContainer.visibility = View.GONE
 
+            binding.rvSeeAllSong.visibility = View.VISIBLE
         }
         localListSong = downloadListSong
     }
 
     private fun topListenedRV() {
         binding.topTextview.text = "Top Listened"
-        val tladapter = TopListAdapter(requireContext(),this)
+        val tladapter = TopListAdapter(requireContext(),this,usercase)
         binding.rvSeeAllSong.setHasFixedSize(true)
         binding.rvSeeAllSong.adapter = tladapter
         viewModel.topListened.observe(viewLifecycleOwner) {
             tladapter.submitList(it)
             topListSong.addAll(it)
+            binding.shimmerViewContainer.stopShimmerAnimation()
+            binding.shimmerViewContainer.visibility = View.GONE
+
+            binding.rvSeeAllSong.visibility = View.VISIBLE
         }
         localListSong = topListSong
     }
@@ -128,8 +148,17 @@ class SeeAllSongFragment : Fragment(), ListenedSongItemClick, GenreItemClick {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        binding.shimmerViewContainer.startShimmerAnimation()
+        if (binding.shimmerViewContainer.visibility == View.GONE)
+            binding.rvSeeAllSong.visibility = View.VISIBLE
 
+    }
 
+    override fun ListSongOnClick(index: Int) {
+        TODO("Not yet implemented")
+    }
 
 
 }

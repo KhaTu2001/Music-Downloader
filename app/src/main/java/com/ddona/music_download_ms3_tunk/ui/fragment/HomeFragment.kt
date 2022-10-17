@@ -17,24 +17,34 @@ import com.ddona.music_download_ms3_tunk.callback.*
 import com.ddona.music_download_ms3_tunk.databinding.FragmentHomeBinding
 import com.ddona.music_download_ms3_tunk.model.Data
 import com.ddona.music_download_ms3_tunk.ui.activity.PlayerActivity
+import com.ddona.music_download_ms3_tunk.user_case.UseCases
 import com.ddona.music_download_ms3_tunk.viewmodel.SongViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 import kotlin.math.abs
 
 
-class HomeFragment() : Fragment(), ListenedSongItemClick, GenreItemClick, TrendingSongItemClick,
+@AndroidEntryPoint
+class HomeFragment : Fragment(), ListenedSongItemClick, GenreItemClick, TrendingSongItemClick,
     DownloadSongItemClick, SliderSongItemClick {
 
     private lateinit var viewPager2: ViewPager2
+
+
     val viewModel: SongViewModel by activityViewModels()
+
+    @Inject
+    lateinit var usercase: UseCases
 
     private lateinit var handler: Handler
 
     companion object {
-        private lateinit var binding: FragmentHomeBinding
+        lateinit var binding: FragmentHomeBinding
         var topListSong: ArrayList<Data> = ArrayList()
         var downloadListSong: ArrayList<Data> = ArrayList()
         var trendingListSong: ArrayList<Data> = ArrayList()
         var sliderListSong: ArrayList<Data> = ArrayList()
+
 
     }
 
@@ -47,6 +57,13 @@ class HomeFragment() : Fragment(), ListenedSongItemClick, GenreItemClick, Trendi
         binding = FragmentHomeBinding.inflate(inflater)
 
 
+        viewModel.isConnected.observe(viewLifecycleOwner) {
+            if (it == false) {
+                binding.shimmerViewContainer.visibility = View.VISIBLE
+                binding.scrollView2.visibility = View.GONE
+                binding.shimmerViewContainer.startShimmerAnimation()
+            }
+        }
 
         if (ChangeRegionFragment.id_country != "") {
             binding.countrySelected.visibility = View.VISIBLE
@@ -55,7 +72,9 @@ class HomeFragment() : Fragment(), ListenedSongItemClick, GenreItemClick, Trendi
             binding.countryName.text = ChangeRegionFragment.name_country
         }
 
-        SliderVP()
+
+
+        sliderVP()
 
         topTrendingRV()
 
@@ -64,6 +83,8 @@ class HomeFragment() : Fragment(), ListenedSongItemClick, GenreItemClick, Trendi
         topDownRV()
 
         genreRV()
+
+
 
         binding.countrySelect.setOnClickListener {
             val action = HomeFragmentDirections.actionHomeFragmentToChangeRegionFragment()
@@ -107,24 +128,40 @@ class HomeFragment() : Fragment(), ListenedSongItemClick, GenreItemClick, Trendi
             findNavController(it).navigate(action)
         }
 
+        viewPager2.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                handler.postDelayed(runnable, 1)
+                if (viewPager2.currentItem > 0)
+                    handler.removeCallbacks(runnable)
+
+            }
+        })
+
         return binding.root
     }
 
-    private fun SliderVP() {
+    private val runnable = Runnable {
+        viewPager2.currentItem = viewPager2.currentItem + 1
+    }
+
+    private fun sliderVP() {
         viewPager2 = binding.vpSlider
         handler = Handler(Looper.myLooper()!!)
 
         viewModel.topTrending.observe(viewLifecycleOwner) {
             sliderListSong.addAll(it.take(10))
+
             binding.shimmerViewContainer.stopShimmerAnimation()
             binding.shimmerViewContainer.visibility = View.GONE
+
             binding.scrollView2.visibility = View.VISIBLE
         }
 
         val twadapter = SliderAdapter(sliderListSong, viewPager2, this)
         viewPager2.adapter = twadapter
         viewPager2.offscreenPageLimit = 3
-        viewPager2.setCurrentItem(2,true)
+        viewPager2.setCurrentItem(2, true)
         viewPager2.clipToPadding = false
         viewPager2.clipChildren = false
         viewPager2.getChildAt(0).overScrollMode = RecyclerView.OVER_SCROLL_NEVER
@@ -133,6 +170,17 @@ class HomeFragment() : Fragment(), ListenedSongItemClick, GenreItemClick, Trendi
 
     }
 
+
+    private fun setUpTransformer() {
+        val transformer = CompositePageTransformer()
+        transformer.addTransformer(MarginPageTransformer(40))
+        transformer.addTransformer { page, position ->
+            val r = 1 - abs(position)
+            page.scaleY = 0.85f + r * 0.14f
+            page.scaleX = 0.85f + r * 0.14f
+        }
+        viewPager2.setPageTransformer(transformer)
+    }
 
     private fun topTrendingRV() {
         val ttadapter = TopTrendingAdapter(this)
@@ -167,19 +215,16 @@ class HomeFragment() : Fragment(), ListenedSongItemClick, GenreItemClick, Trendi
     }
 
     private fun topListenedRV() {
-        val tladapter = TopListAdapter(requireContext(), this,false)
+        val tdadapter = TopListAdapter(requireContext(), this, usercase, false)
         binding.rvTopListend.setHasFixedSize(true)
-        binding.rvTopListend.adapter = tladapter
+        binding.rvTopListend.adapter = tdadapter
         viewModel.topListened.observe(viewLifecycleOwner) {
-            tladapter.submitList(it.take(5))
+            tdadapter.submitList(it.take(5))
             topListSong.addAll(it)
-
 
         }
 
     }
-
-
 
     override fun downloadOnClick(index: Int) {
         val intent = Intent(context, PlayerActivity::class.java)
@@ -220,29 +265,32 @@ class HomeFragment() : Fragment(), ListenedSongItemClick, GenreItemClick, Trendi
     }
 
 
-
-    private fun setUpTransformer() {
-        val transformer = CompositePageTransformer()
-        transformer.addTransformer(MarginPageTransformer(40))
-        transformer.addTransformer { page, position ->
-            val r = 1 - abs(position)
-            page.scaleY = 0.85f + r * 0.14f
-        }
-        viewPager2.setPageTransformer(transformer)
-    }
-
-
     override fun onStart() {
         super.onStart()
-        if (PlayerActivity.musicService != null) binding.nowPlaying.visibility = View.VISIBLE
+        if (PlayerActivity.musicService != null) {
+            binding.nowPlaying.visibility = View.VISIBLE
+        }
+
+
     }
 
     override fun onResume() {
         super.onResume()
+
+
+
         binding.shimmerViewContainer.startShimmerAnimation()
-        if(binding.shimmerViewContainer.visibility == View.GONE)
+        if (binding.shimmerViewContainer.visibility == View.GONE)
             binding.scrollView2.visibility = View.VISIBLE
 
+        if (binding.nowPlaying.visibility == View.VISIBLE) {
+            binding.scrollView2.setPadding(0, 50, 0, 60)
+        } else {
+            binding.scrollView2.setPadding(0, 0, 0, 0)
+
+        }
+
     }
+
 
 }

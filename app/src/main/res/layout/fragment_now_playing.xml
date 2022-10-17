@@ -4,29 +4,38 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/background_nowplaying">
+    android:layout_height="wrap_content">
 
     <SeekBar
         android:id="@+id/seekBar"
         android:layout_width="match_parent"
-        android:layout_height="3dp"
-        android:progress="10"
+        android:layout_height="6dp"
+        android:progress="100"
+        android:theme="@style/tallerBarStyle"
+        android:thumbTint="@color/gray"
         android:progressBackgroundTint="@color/gray"
         android:progressTint="@color/colorPrimary"
         android:thumb="@color/gray"
         app:layout_constraintEnd_toEndOf="parent"
+        android:background="@color/background"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toTopOf="@+id/constraint" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraint"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@color/background_nowplaying"
+        app:layout_constraintBottom_toBottomOf="parent">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/song_img"
-        android:layout_width="70dp"
-        android:layout_height="45dp"
-        android:layout_marginHorizontal="10dp"
-        android:layout_marginVertical="5dp"
-        android:layout_marginTop="8dp"
-
+        android:layout_width="54dp"
+        android:layout_height="54dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
         android:src="@drawable/song_img"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -71,6 +80,7 @@
         android:layout_height="wrap_content"
         android:padding="14dp"
         android:layout_marginRight="12dp"
+        android:layout_marginTop="16dp"
         android:src="@drawable/ic_play_song_icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -82,10 +92,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="16dp"
+        android:layout_marginTop="16dp"
         android:src="@drawable/ic_clear_song"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

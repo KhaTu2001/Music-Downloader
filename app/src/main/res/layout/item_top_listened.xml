@@ -17,6 +17,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
         <LinearLayout
+            android:id="@+id/ln_index"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:orientation="horizontal"
@@ -68,8 +69,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Devon Lane"
-                android:textSize="12dp"
+                android:textSize="10dp"
                 android:textColor="@color/white"
+                android:textStyle="normal"
                 android:alpha="0.7"
                 android:fontFamily="@font/inter_semibold"/>
 

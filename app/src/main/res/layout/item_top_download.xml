@@ -48,7 +48,8 @@
         android:text="Devon Lane"
         android:textColor="@color/white"
         android:textStyle="normal"
-        android:textSize="14dp"
+        android:textSize="10dp"
+        android:alpha="0.8"
         android:fontFamily="@font/inter_semibold"
         app:layout_constraintTop_toBottomOf="@id/song_named"
         app:layout_constraintStart_toStartOf="@id/song_named" />

@@ -2,46 +2,50 @@ package com.ddona.music_download_ms3_tunk.model
 
 import android.os.Parcel
 import android.os.Parcelable
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import java.io.Serializable
 
-
+@Entity(tableName = "music", primaryKeys = ["id","playlist_id"])
 data class Data(
-    val albumId: String,
+    val id: String,
+    val playlist_id:Int = -1,
     val albumName: String,
     val artistId: String,
     val artistName: String,
     val audio: String,
     val audioDownload: String,
     val duration: Long,
-    val id: String,
+    val albumId: String,
     val image: String,
     val name: String,
+
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString().toString(),
+        parcel.readInt(),
         parcel.readString().toString(),
         parcel.readString().toString(),
         parcel.readString().toString(),
         parcel.readString().toString(),
         parcel.readString().toString(),
-        parcel.readInt().toLong(),
+        parcel.readLong(),
         parcel.readString().toString(),
         parcel.readString().toString(),
         parcel.readString().toString()
     ) {
     }
 
-
-
-
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(albumId)
+        parcel.writeString(id)
+        parcel.writeInt(playlist_id)
         parcel.writeString(albumName)
         parcel.writeString(artistId)
         parcel.writeString(artistName)
         parcel.writeString(audio)
         parcel.writeString(audioDownload)
-        parcel.writeInt(duration.toInt())
-        parcel.writeString(id)
+        parcel.writeLong(duration)
+        parcel.writeString(albumId)
         parcel.writeString(image)
         parcel.writeString(name)
     }

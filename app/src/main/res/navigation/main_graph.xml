@@ -22,6 +22,9 @@
         <action
             android:id="@+id/action_homeFragment_to_changeRegionFragment"
             app:destination="@id/changeRegionFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_downloadFragment"
+            app:destination="@id/downloadFragment" />
     </fragment>
 
     <fragment

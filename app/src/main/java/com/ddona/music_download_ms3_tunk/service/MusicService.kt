@@ -4,6 +4,7 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.media.AudioManager
+import android.media.AudioManager.FLAG_ALLOW_RINGER_MODES
 import android.media.AudioManager.STREAM_NOTIFICATION
 import android.media.MediaPlayer
 import android.media.audiofx.LoudnessEnhancer
@@ -43,19 +44,19 @@ class MusicService: Service(), AudioManager.OnAudioFocusChangeListener {
     fun showNotification(playPauseBtn: Int){
 
         val intent = Intent(this, MainActivity::class.java)
-        val contentIntent = PendingIntent.getActivity(this, 0, intent, 0)
+        val contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
 
         val prevIntent = Intent(this, NotificationReceiver::class.java).setAction(App.PREVIOUS)
-        val prevPendingIntent = PendingIntent.getBroadcast(this, 0, prevIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val prevPendingIntent = PendingIntent.getBroadcast(this, 0, prevIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
         val playIntent = Intent(this, NotificationReceiver::class.java).setAction(App.PLAY)
-        val playPendingIntent = PendingIntent.getBroadcast(this, 0, playIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val playPendingIntent = PendingIntent.getBroadcast(this, 0, playIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
         val nextIntent = Intent(this, NotificationReceiver::class.java).setAction(App.NEXT)
-        val nextPendingIntent = PendingIntent.getBroadcast(this, 0, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val nextPendingIntent = PendingIntent.getBroadcast(this, 0, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
         val exitIntent = Intent(this, NotificationReceiver::class.java).setAction(App.EXIT)
-        val exitPendingIntent = PendingIntent.getBroadcast(this, 0, exitIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val exitPendingIntent = PendingIntent.getBroadcast(this, 0, exitIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
 
         val notification = NotificationCompat.Builder(this, App.CHANNEL_ID)
@@ -133,6 +134,7 @@ class MusicService: Service(), AudioManager.OnAudioFocusChangeListener {
             mediaPlayer!!.prepare()
             PlayerActivity.binding.playPauseBtn.setImageResource(R.drawable.ic_pause_song)
             showNotification(R.drawable.ic_pause_song_icon)
+
             PlayerActivity.binding.tvSeekBarStart.text = formatDuration(mediaPlayer!!.currentPosition.toLong())
             PlayerActivity.binding.tvSeekBarEnd.text = formatDuration(mediaPlayer!!.duration.toLong())
             PlayerActivity.binding.seekBar.progress = 0F

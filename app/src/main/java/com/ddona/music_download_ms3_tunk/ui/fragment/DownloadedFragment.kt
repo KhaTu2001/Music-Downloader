@@ -8,8 +8,15 @@ import android.view.ViewGroup
 import com.ddona.music_download_ms3_tunk.adapter.MusicAdapter
 import com.ddona.music_download_ms3_tunk.databinding.FragmentDownloadedBinding
 import com.ddona.music_download_ms3_tunk.ui.activity.MainActivity
+import com.ddona.music_download_ms3_tunk.user_case.UseCases
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class DownloadedFragment : Fragment() {
+
+    @Inject
+    lateinit var useCases: UseCases
 
     private lateinit var binding: FragmentDownloadedBinding
     companion object{
@@ -25,7 +32,7 @@ class DownloadedFragment : Fragment() {
         binding = FragmentDownloadedBinding.inflate(inflater)
 
         binding.RvAllMusic.setHasFixedSize(true)
-        musicAdapter = MusicAdapter(requireContext(), MainActivity.MusicListMA)
+        musicAdapter = MusicAdapter(requireContext(), MainActivity.MusicListMA,false,useCases,true)
         binding.RvAllMusic.adapter = musicAdapter
 
         return binding.root

@@ -1,22 +1,14 @@
 package com.codingstuff.imageslider
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.widget.ViewPager2
-import com.ddona.music_download_ms3_tunk.R
-import com.ddona.music_download_ms3_tunk.adapter.MusicAdapter
 import com.ddona.music_download_ms3_tunk.callback.CountryItemClick
-import com.ddona.music_download_ms3_tunk.callback.DownloadSongItemClick
 import com.ddona.music_download_ms3_tunk.databinding.ItemCountryBinding
-import com.ddona.music_download_ms3_tunk.databinding.ItemTopListenedBinding
 import com.ddona.music_download_ms3_tunk.model.Country
-import com.ddona.music_download_ms3_tunk.model.Data
 
 class CountryAdapter(
-    private val countryList: ArrayList<Country>,
+    private var countryList: ArrayList<Country>,
     private val callback: CountryItemClick
 ) :
     RecyclerView.Adapter<CountryAdapter.ViewHolder>() {
@@ -47,12 +39,15 @@ class CountryAdapter(
 
     }
 
+    fun updateMusicList(Country: ArrayList<Country>) {
+        countryList = ArrayList()
+        countryList.addAll(Country)
+        notifyDataSetChanged()
+    }
 
     override fun getItemCount(): Int {
         return countryList.size
     }
-
-
 
 
 }
