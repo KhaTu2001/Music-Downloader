@@ -79,18 +79,18 @@ class MainActivity : AppCompatActivity() {
                 .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
 
 
-        val inflater = navHostFragment.navController.navInflater
-        val graph = inflater.inflate(R.navigation.main_graph)
-
-        viewModel.isConnected.observe(this) {
-            lifecycleScope.launch {
-                delay(1000)
-                if (it == false) {
-
-                }
-            }
-
-        }
+//        val inflater = navHostFragment.navController.navInflater
+//        val graph = inflater.inflate(R.navigation.main_graph)
+//
+//        viewModel.isConnected.observe(this) {
+//            lifecycleScope.launch {
+//                delay(1000)
+//                if (it == false) {
+//
+//                }
+//            }
+//
+//        }
 
         navController = navHostFragment.findNavController()
 

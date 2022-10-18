@@ -58,11 +58,12 @@ class PlaylistAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun bind(playlistMusic: playlistMusic) {
 
-            if (playlistMusic in playlistList) {
-                playlistList = playlistList
-            } else {
-                playlistList.add(playlistMusic)
-            }
+
+            if (playlistMusic in playlistList) playlistList = playlistList
+             else playlistList.add(playlistMusic)
+
+
+//            if(playlistMusic.playlistName == playlistList[adapterPosition].playlistName) playlistList.removeAt(adapterPosition)
 
             binding.playlistName.text = playlistMusic.playlistName
 

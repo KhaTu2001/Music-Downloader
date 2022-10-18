@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.*
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation.findNavController
@@ -55,6 +56,11 @@ class HomeFragment : Fragment(), ListenedSongItemClick, GenreItemClick, Trending
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentHomeBinding.inflate(inflater)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
 
         viewModel.isConnected.observe(viewLifecycleOwner) {
@@ -62,6 +68,10 @@ class HomeFragment : Fragment(), ListenedSongItemClick, GenreItemClick, Trending
                 binding.shimmerViewContainer.visibility = View.VISIBLE
                 binding.scrollView2.visibility = View.GONE
                 binding.shimmerViewContainer.startShimmerAnimation()
+                Toast.makeText(requireContext(),
+                    "Network unavailable ",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
 
@@ -138,7 +148,6 @@ class HomeFragment : Fragment(), ListenedSongItemClick, GenreItemClick, Trending
             }
         })
 
-        return binding.root
     }
 
     private val runnable = Runnable {

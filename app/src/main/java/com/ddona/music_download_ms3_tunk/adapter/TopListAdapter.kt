@@ -251,6 +251,11 @@ class TopListAdapter(
         var playlistExists = false
         for (i in PlaylistAdapter.playlistList) {
             if (name == i.playlistName) {
+//                var check = playlistMusic(
+//
+//                )
+//                PlaylistAdapter.playlistList.remove(check)
+
                 playlistExists = true
                 break
             }

@@ -267,31 +267,35 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
 
 
     private fun createMediaPlayer() {
-
         try {
-            if (musicService!!.mediaPlayer == null) musicService!!.mediaPlayer = MediaPlayer()
-            musicService!!.mediaPlayer!!.reset()
-            musicService!!.mediaPlayer!!.setDataSource(musicList[songPosition].audio)
-            musicService!!.mediaPlayer!!.prepare()
-            binding.tvSeekBarStart.text =
-                formatDuration(musicService!!.mediaPlayer!!.currentPosition.toLong())
-            binding.tvSeekBarEnd.text =
-                formatDuration(musicService!!.mediaPlayer!!.duration.toLong())
-            binding.seekBar.progress = 0F
-            binding.seekBar.max = musicService!!.mediaPlayer!!.duration.toFloat()
-            musicService!!.mediaPlayer!!.setOnCompletionListener(this)
-            nowPlayingId = musicList[songPosition].id
-            playMusic()
-            startAnimationRotate()
-            if (musicList.size - 1 == songPosition && playoneTime) {
-                pauseMusic()
-            }
-            playoneTime = false
-            loudnessEnhancer = LoudnessEnhancer(musicService!!.mediaPlayer!!.audioSessionId)
-            loudnessEnhancer.enabled = true
+            lifecycleScope.launch {
+                if (musicService!!.mediaPlayer == null)
+                    musicService!!.mediaPlayer = MediaPlayer()
+                musicService!!.mediaPlayer!!.reset()
+                musicService!!.mediaPlayer!!.setDataSource(musicList[songPosition].audio)
+                musicService!!.mediaPlayer!!.prepare()
+                musicService!!.mediaPlayer!!.setOnCompletionListener(this@PlayerActivity)
+                    nowPlayingId = musicList[songPosition].id
+                    binding.tvSeekBarStart.text =
+                        formatDuration(musicService!!.mediaPlayer!!.currentPosition.toLong())
+                    binding.tvSeekBarEnd.text =
+                        formatDuration(musicService!!.mediaPlayer!!.duration.toLong())
+                    binding.seekBar.progress = 0F
+                    binding.seekBar.max = musicService!!.mediaPlayer!!.duration.toFloat()
+                    playMusic()
+                    startAnimationRotate()
+                    if (musicList.size - 1 == songPosition && playoneTime) {
+                        pauseMusic()
+                    }
+                    playoneTime = false
+                    loudnessEnhancer = LoudnessEnhancer(musicService!!.mediaPlayer!!.audioSessionId)
+                    loudnessEnhancer.enabled = true
+                }
+
         } catch (e: Exception) {
-            return
+
         }
+
     }
 
 
@@ -444,12 +448,16 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         val intent = Intent(this, MusicService::class.java)
         bindService(intent, this, BIND_AUTO_CREATE)
         startService(intent)
+        lifecycleScope.launch(Dispatchers.IO) {
+            musicList = ArrayList()
+            oldmusicList = ArrayList()
+            musicList.addAll(playlist)
+            oldmusicList.addAll(playlist)
+            withContext(Dispatchers.Main) {
+                setLayout()
+            }
+        }
 
-        musicList = ArrayList()
-        oldmusicList = ArrayList()
-        musicList.addAll(playlist)
-        oldmusicList.addAll(playlist)
-        setLayout()
     }
 
 
@@ -521,19 +529,19 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
             bottomSheet2.findViewById<EditText>(R.id.edt_search)
 
         var job: Job? = null
-            searchText?.addTextChangedListener { editable ->
-                job?.cancel()
-                job = MainScope().launch {
-                    editable?.let {
-                        if (editable.toString().isNotEmpty()) {
-                            CoroutineScope(Dispatchers.IO).launch {
-                                usercase.getAllPlaylistByName.invoke(editable.toString()).collect {
-                                        adapter.submitList(it)
-                                }
+        searchText?.addTextChangedListener { editable ->
+            job?.cancel()
+            job = MainScope().launch {
+                editable?.let {
+                    if (editable.toString().isNotEmpty()) {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            usercase.getAllPlaylistByName.invoke(editable.toString()).collect {
+                                adapter.submitList(it)
                             }
                         }
                     }
                 }
+            }
         }
 
 

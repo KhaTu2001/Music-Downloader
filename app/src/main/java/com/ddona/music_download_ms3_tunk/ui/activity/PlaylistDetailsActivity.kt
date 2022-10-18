@@ -14,12 +14,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.ddona.music_download_ms3_tunk.R
+import com.ddona.music_download_ms3_tunk.adapter.PlaylistAdapter
 import com.ddona.music_download_ms3_tunk.adapter.PlaylistDetailsAdapter
 import com.ddona.music_download_ms3_tunk.databinding.ActivityPlaylistDetailsBinding
 import com.ddona.music_download_ms3_tunk.databinding.CreateNewPlaylistDialogBinding
 import com.ddona.music_download_ms3_tunk.databinding.DeletePlaylistDialogBinding
 import com.ddona.music_download_ms3_tunk.databinding.RenamePlaylistDialogBinding
 import com.ddona.music_download_ms3_tunk.ui.fragment.ChangeRegionFragmentDirections
+import com.ddona.music_download_ms3_tunk.ui.fragment.MyMusicFragment
 import com.ddona.music_download_ms3_tunk.user_case.UseCases
 import com.ddona.music_download_ms3_tunk.user_case.updatePlaylistUserCase
 import com.ddona.music_download_ms3_tunk.viewmodel.SongViewModel

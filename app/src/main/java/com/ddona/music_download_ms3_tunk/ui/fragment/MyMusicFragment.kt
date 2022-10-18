@@ -32,7 +32,9 @@ class MyMusicFragment : Fragment() {
     val viewModel: SongViewModel by activityViewModels()
 
     companion object{
-         lateinit var binding: FragmentMyMusicBinding
+        lateinit var binding: FragmentMyMusicBinding
+        var indexOF:Int = 0
+
     }
 
     private lateinit var adapter: PlaylistAdapter
