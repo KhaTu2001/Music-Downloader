@@ -34,7 +34,7 @@ class SongViewModel @Inject constructor(
     var searchList = MutableLiveData<List<Data>>()
     var playlistmusicList = MutableLiveData<List<playlistMusic>>()
 
-    private lateinit var connectivityObserver: ConnectivityObserver
+    private var connectivityObserver: ConnectivityObserver
 
     val isConnected = MutableLiveData(true)
 
@@ -51,6 +51,7 @@ class SongViewModel @Inject constructor(
                         getAllPlaylistList()
 
                 }
+
                 isConnected.postValue(true)
             }
             else{

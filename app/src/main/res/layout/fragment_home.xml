@@ -40,17 +40,17 @@
     </com.facebook.shimmer.ShimmerFrameLayout>
 
     <ScrollView
-        android:id="@+id/scrollView2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/nowPlaying"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
 
         <LinearLayout
+            android:id="@+id/scrollView2"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="top"
@@ -379,16 +379,6 @@
 
     </ScrollView>
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/nowPlaying"
-        android:name="com.ddona.music_download_ms3_tunk.ui.fragment.NowPlaying"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout="@layout/fragment_now_playing" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

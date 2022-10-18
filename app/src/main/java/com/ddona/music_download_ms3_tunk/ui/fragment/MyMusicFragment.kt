@@ -33,8 +33,6 @@ class MyMusicFragment : Fragment() {
 
     companion object{
         lateinit var binding: FragmentMyMusicBinding
-        var indexOF:Int = 0
-
     }
 
     private lateinit var adapter: PlaylistAdapter

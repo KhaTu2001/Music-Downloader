@@ -25,6 +25,7 @@ import com.ddona.music_download_ms3_tunk.ui.fragment.ChangeRegionFragment
 import com.ddona.music_download_ms3_tunk.user_case.UseCases
 import com.ddona.music_download_ms3_tunk.model.Data
 import com.ddona.music_download_ms3_tunk.model.exitApplication
+import com.ddona.music_download_ms3_tunk.ui.fragment.HomeFragment
 import com.ddona.music_download_ms3_tunk.viewmodel.SongViewModel
 import com.example.newsapp.fragments.FavouriteFragment
 import com.google.gson.GsonBuilder
@@ -82,57 +83,53 @@ class MainActivity : AppCompatActivity() {
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id == R.id.searchFragment || destination.id == R.id.changeRegionFragment) {
-                if (destination.id == R.id.searchFragment || destination.id == R.id.changeRegionFragment) {
-                    binding.bottomNav.visibility = View.GONE
-                } else {
+                binding.bottomNav.visibility = View.GONE
+            } else {
 
-                    binding.bottomNav.visibility = View.VISIBLE
-                }
+                binding.bottomNav.visibility = View.VISIBLE
             }
-            appBarConfiguration = AppBarConfiguration(
-                setOf(
-                    R.id.homeFragment,
-                    R.id.downloadFragment,
-                    R.id.playlistFragment,
-                    R.id.settingFragment
-                )
+        }
+        appBarConfiguration = AppBarConfiguration(
+            setOf(
+                R.id.homeFragment,
+                R.id.downloadFragment,
+                R.id.playlistFragment,
+                R.id.settingFragment
             )
-
-            setSupportActionBar(binding.toolbar)
-            setupActionBarWithNavController(navController, appBarConfiguration)
-
-            binding.bottomNav.setupWithNavController(navController)
+        )
 
 
-            if (requestRuntimePermission()) {
-                //for retrieving favourites data using shared preferences
-                FavouriteFragment.favouriteList = ArrayList()
-                val editor = getSharedPreferences("FAVOURITES", MODE_PRIVATE)
-                val jsonString = editor.getString("FavouriteSongs", null)
-                val typeToken = object : TypeToken<ArrayList<Data>>() {}.type
-                if (jsonString != null) {
-                    val data: ArrayList<Data> =
-                        GsonBuilder().create().fromJson(jsonString, typeToken)
-                    FavouriteFragment.favouriteList.addAll(data)
-                }
+        setSupportActionBar(binding.toolbar)
+        setupActionBarWithNavController(navController, appBarConfiguration)
+
+        binding.bottomNav.setupWithNavController(navController)
 
 
-                val pref = getSharedPreferences("COUNTRY", MODE_PRIVATE)
-                val data1 = pref.getString("id_country", null)
-                val data2 = pref.getString("name_country", null)
-                val data3 = pref.getInt("flag_country", R.drawable.ic_language_select)
-                if (data1 != null && data2 != null) {
-                    ChangeRegionFragment.id_country = data1
-                    ChangeRegionFragment.name_country = data2
-                    ChangeRegionFragment.flag_country = data3
-
-                }
-
-
+        if (requestRuntimePermission()) {
+            //for retrieving favourites data using shared preferences
+            FavouriteFragment.favouriteList = ArrayList()
+            val editor = getSharedPreferences("FAVOURITES", MODE_PRIVATE)
+            val jsonString = editor.getString("FavouriteSongs", null)
+            val typeToken = object : TypeToken<ArrayList<Data>>() {}.type
+            if (jsonString != null) {
+                val data: ArrayList<Data> =
+                    GsonBuilder().create().fromJson(jsonString, typeToken)
+                FavouriteFragment.favouriteList.addAll(data)
             }
 
+            val pref = getSharedPreferences("COUNTRY", MODE_PRIVATE)
+            val data1 = pref.getString("id_country", null)
+            val data2 = pref.getString("name_country", null)
+            val data3 = pref.getInt("flag_country", R.drawable.ic_language_select)
+            if (data1 != null && data2 != null) {
+                ChangeRegionFragment.id_country = data1
+                ChangeRegionFragment.name_country = data2
+                ChangeRegionFragment.flag_country = data3
+
+            }
 
         }
+
     }
 
 
@@ -154,7 +151,9 @@ class MainActivity : AppCompatActivity() {
         editor.putString("FavouriteSongs", jsonString)
         editor.apply()
 
-
+        if (PlayerActivity.musicService != null) {
+            binding.nowPlaying.visibility = View.VISIBLE
+        }
     }
 
     private fun requestRuntimePermission(): Boolean {
@@ -177,12 +176,12 @@ class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.R)
     @SuppressLint("SetTextI18n")
     private fun initializeLayout() {
-            val sortEditor = getSharedPreferences("SORTING", MODE_PRIVATE)
-            sortOrder = sortEditor.getInt("sortOrder", 0)
-            MusicListMA = getAllAudio()
+        val sortEditor = getSharedPreferences("SORTING", MODE_PRIVATE)
+        sortOrder = sortEditor.getInt("sortOrder", 0)
+        MusicListMA = getAllAudio()
 
 
-            //for refreshing layout on swipe from top
+        //for refreshing layout on swipe from top
     }
 
     @RequiresApi(Build.VERSION_CODES.R)

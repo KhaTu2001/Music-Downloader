@@ -57,12 +57,6 @@ class HomeFragment : Fragment(), ListenedSongItemClick, GenreItemClick, Trending
     ): View {
         binding = FragmentHomeBinding.inflate(inflater)
 
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
 
         viewModel.isConnected.observe(viewLifecycleOwner) {
             if (it == false) {
@@ -149,7 +143,9 @@ class HomeFragment : Fragment(), ListenedSongItemClick, GenreItemClick, Trending
             }
         })
 
+        return binding.root
     }
+
 
     private val runnable = Runnable {
         viewPager2.currentItem = viewPager2.currentItem + 1
@@ -164,12 +160,14 @@ class HomeFragment : Fragment(), ListenedSongItemClick, GenreItemClick, Trending
 
             binding.shimmerViewContainer.stopShimmerAnimation()
             binding.shimmerViewContainer.visibility = View.GONE
+
             binding.scrollView2.visibility = View.VISIBLE
         }
 
         val twadapter = SliderAdapter(sliderListSong, viewPager2, this)
         viewPager2.adapter = twadapter
         viewPager2.offscreenPageLimit = 3
+        viewPager2.setCurrentItem(2, true)
         viewPager2.clipToPadding = false
         viewPager2.clipChildren = false
         viewPager2.getChildAt(0).overScrollMode = RecyclerView.OVER_SCROLL_NEVER
@@ -181,7 +179,7 @@ class HomeFragment : Fragment(), ListenedSongItemClick, GenreItemClick, Trending
 
     private fun setUpTransformer() {
         val transformer = CompositePageTransformer()
-        transformer.addTransformer(MarginPageTransformer(30))
+        transformer.addTransformer(MarginPageTransformer(40))
         transformer.addTransformer { page, position ->
             val r = 1 - abs(position)
             page.scaleY = 0.85f + r * 0.14f
@@ -273,15 +271,6 @@ class HomeFragment : Fragment(), ListenedSongItemClick, GenreItemClick, Trending
     }
 
 
-    override fun onStart() {
-        super.onStart()
-        if (PlayerActivity.musicService != null) {
-            binding.nowPlaying.visibility = View.VISIBLE
-        }
-
-
-    }
-
     override fun onResume() {
         super.onResume()
 
@@ -291,12 +280,6 @@ class HomeFragment : Fragment(), ListenedSongItemClick, GenreItemClick, Trending
         if (binding.shimmerViewContainer.visibility == View.GONE)
             binding.scrollView2.visibility = View.VISIBLE
 
-        if (binding.nowPlaying.visibility == View.VISIBLE) {
-            binding.scrollView2.setPadding(0, 50, 0, 60)
-        } else {
-            binding.scrollView2.setPadding(0, 0, 0, 0)
-
-        }
 
     }
 

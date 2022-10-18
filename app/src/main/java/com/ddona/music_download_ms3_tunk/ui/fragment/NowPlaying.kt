@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.ddona.music_download_ms3_tunk.R
 import com.ddona.music_download_ms3_tunk.databinding.FragmentNowPlayingBinding
+import com.ddona.music_download_ms3_tunk.ui.activity.MainActivity
 import com.ddona.music_download_ms3_tunk.ui.activity.PlayerActivity
 import com.ddona.music_download_ms3_tunk.ui.activity.PlayerActivity.Companion.musicService
 
@@ -44,8 +45,9 @@ class NowPlaying : Fragment() {
                 musicService!!.audioManager.abandonAudioFocus(musicService)
                 musicService!!.stopForeground(true)
                 musicService!!.mediaPlayer!!.stop()
+//                musicService = null
                 binding.root.visibility = View.GONE
-                HomeFragment.binding.nowPlaying.visibility = View.GONE
+                MainActivity.binding.nowPlaying.visibility = View.GONE
             }
         }
 
@@ -103,6 +105,9 @@ class NowPlaying : Fragment() {
             else binding.PlaypauseBtnNP.setImageResource(R.drawable.ic_play_song_icon)
 
         }
+//        else{
+//            Handler(Looper.getMainLooper()).removeCallbacks(runnable)
+//        }
     }
 
 

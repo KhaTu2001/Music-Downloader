@@ -15,35 +15,39 @@
         android:theme="@style/Theme.AppCompat.Light.DarkActionBar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
-
-
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
+
         app:defaultNavHost="true"
-        app:layout_constraintBottom_toTopOf="@id/bottom_nav"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/nowPlaying"
         app:layout_constraintTop_toTopOf="parent"
         app:navGraph="@navigation/main_graph" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/nowPlaying"
+        android:name="com.ddona.music_download_ms3_tunk.ui.fragment.NowPlaying"
+        android:layout_width="match_parent"
+        android:layout_height="71dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@+id/nav_host_fragment"
+        app:layout_constraintBottom_toTopOf="@id/bottom_nav"
+        tools:layout="@layout/fragment_now_playing" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_nav"
         android:layout_width="match_parent"
         android:layout_height="72dp"
-        app:labelVisibilityMode="unlabeled"
         android:background="@color/background"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/bottom_navigation_menu"
         app:itemIconTint="@drawable/bottom_navigation_selector"
-        />
+        app:labelVisibilityMode="unlabeled"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nowPlaying"
+        app:menu="@menu/bottom_navigation_menu" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
