@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="16dp"
+    android:background="@color/background">
+
+    <LinearLayout
+        android:id="@+id/ln_pause_download"
+        android:layout_width="match_parent"
+        android:layout_height="57dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/bottomsheet_btn">
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_download_song"
+            android:backgroundTint="@color/white"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="20dp"/>
+        <TextView
+            android:id="@+id/txt_pause_download"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pause Download"
+            android:layout_marginStart="22dp"
+            android:layout_gravity="center_vertical"
+            android:textColor="@color/white"
+            android:fontFamily="@font/inter_semibold"
+            android:textSize="16dp"
+            />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/ln_remove_download"
+        android:layout_width="match_parent"
+        android:layout_height="57dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/bottomsheet_btn">
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_download_song"
+            android:backgroundTint="@color/white"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="20dp"/>
+        <TextView
+            android:id="@+id/txt_remove_download"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Remove Download"
+            android:layout_marginStart="22dp"
+            android:layout_gravity="center_vertical"
+            android:textColor="@color/white"
+            android:fontFamily="@font/inter_semibold"
+            android:textSize="16dp"
+            />
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:id="@+id/ln_share_song"
+        android:layout_width="match_parent"
+        android:layout_height="57dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/bottomsheet_btn">
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_share_song"
+            android:backgroundTint="@color/white"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="20dp"/>
+        <TextView
+            android:id="@+id/txt_share_song"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Share"
+            android:layout_marginStart="22dp"
+            android:layout_gravity="center_vertical"
+            android:textColor="@color/white"
+            android:fontFamily="@font/inter_semibold"
+            android:textSize="16dp"
+            />
+    </LinearLayout>
+
+
+</LinearLayout>

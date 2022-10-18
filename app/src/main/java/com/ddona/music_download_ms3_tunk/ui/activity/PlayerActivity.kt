@@ -267,35 +267,36 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
 
 
     private fun createMediaPlayer() {
-        try {
-            lifecycleScope.launch {
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
                 if (musicService!!.mediaPlayer == null)
                     musicService!!.mediaPlayer = MediaPlayer()
-                musicService!!.mediaPlayer!!.reset()
-                musicService!!.mediaPlayer!!.setDataSource(musicList[songPosition].audio)
-                musicService!!.mediaPlayer!!.prepare()
-                musicService!!.mediaPlayer!!.setOnCompletionListener(this@PlayerActivity)
-                    nowPlayingId = musicList[songPosition].id
-                    binding.tvSeekBarStart.text =
-                        formatDuration(musicService!!.mediaPlayer!!.currentPosition.toLong())
-                    binding.tvSeekBarEnd.text =
-                        formatDuration(musicService!!.mediaPlayer!!.duration.toLong())
-                    binding.seekBar.progress = 0F
-                    binding.seekBar.max = musicService!!.mediaPlayer!!.duration.toFloat()
-                    playMusic()
-                    startAnimationRotate()
-                    if (musicList.size - 1 == songPosition && playoneTime) {
-                        pauseMusic()
-                    }
-                    playoneTime = false
-                    loudnessEnhancer = LoudnessEnhancer(musicService!!.mediaPlayer!!.audioSessionId)
-                    loudnessEnhancer.enabled = true
+                withContext(Dispatchers.Main) {
+                    musicService!!.mediaPlayer!!.reset()
+                    musicService!!.mediaPlayer!!.setDataSource(musicList[songPosition].audio)
+                    musicService!!.mediaPlayer!!.prepare()
+                    musicService!!.mediaPlayer!!.setOnCompletionListener(this@PlayerActivity)
                 }
+                binding.tvSeekBarStart.text =
+                    formatDuration(musicService!!.mediaPlayer!!.currentPosition.toLong())
+                binding.tvSeekBarEnd.text =
+                    formatDuration(musicService!!.mediaPlayer!!.duration.toLong())
+                binding.seekBar.progress = 0F
+                binding.seekBar.max = musicService!!.mediaPlayer!!.duration.toFloat()
+                nowPlayingId = musicList[songPosition].id
+                playMusic()
+                startAnimationRotate()
+                if (musicList.size - 1 == songPosition && playoneTime) {
+                    pauseMusic()
+                }
+                playoneTime = false
+                loudnessEnhancer = LoudnessEnhancer(musicService!!.mediaPlayer!!.audioSessionId)
+                loudnessEnhancer.enabled = true
 
-        } catch (e: Exception) {
+            } catch (e: Exception) {
 
+            }
         }
-
     }
 
 

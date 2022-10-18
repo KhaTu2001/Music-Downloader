@@ -7,12 +7,10 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
@@ -23,16 +21,15 @@ import androidx.navigation.ui.setupWithNavController
 import com.ddona.music_download_ms3_tunk.R
 import com.ddona.music_download_ms3_tunk.api.SongApi
 import com.ddona.music_download_ms3_tunk.databinding.ActivityMainBinding
-import com.ddona.music_download_ms3_tunk.model.*
 import com.ddona.music_download_ms3_tunk.ui.fragment.ChangeRegionFragment
 import com.ddona.music_download_ms3_tunk.user_case.UseCases
+import com.ddona.music_download_ms3_tunk.model.Data
+import com.ddona.music_download_ms3_tunk.model.exitApplication
 import com.ddona.music_download_ms3_tunk.viewmodel.SongViewModel
 import com.example.newsapp.fragments.FavouriteFragment
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
 
@@ -72,6 +69,8 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
+
         initializeLayout()
 
         val navHostFragment =
@@ -79,73 +78,63 @@ class MainActivity : AppCompatActivity() {
                 .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
 
 
-//        val inflater = navHostFragment.navController.navInflater
-//        val graph = inflater.inflate(R.navigation.main_graph)
-//
-//        viewModel.isConnected.observe(this) {
-//            lifecycleScope.launch {
-//                delay(1000)
-//                if (it == false) {
-//
-//                }
-//            }
-//
-//        }
-
         navController = navHostFragment.findNavController()
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id == R.id.searchFragment || destination.id == R.id.changeRegionFragment) {
-                binding.bottomNav.visibility = View.GONE
-            } else {
+                if (destination.id == R.id.searchFragment || destination.id == R.id.changeRegionFragment) {
+                    binding.bottomNav.visibility = View.GONE
+                } else {
 
-                binding.bottomNav.visibility = View.VISIBLE
+                    binding.bottomNav.visibility = View.VISIBLE
+                }
             }
-        }
-        appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.homeFragment,
-                R.id.downloadFragment,
-                R.id.playlistFragment,
-                R.id.settingFragment
+            appBarConfiguration = AppBarConfiguration(
+                setOf(
+                    R.id.homeFragment,
+                    R.id.downloadFragment,
+                    R.id.playlistFragment,
+                    R.id.settingFragment
+                )
             )
-        )
 
-        setSupportActionBar(binding.toolbar)
-        setupActionBarWithNavController(navController, appBarConfiguration)
+            setSupportActionBar(binding.toolbar)
+            setupActionBarWithNavController(navController, appBarConfiguration)
 
-        binding.bottomNav.setupWithNavController(navController)
-
-
-        if (requestRuntimePermission()) {
-            //for retrieving favourites data using shared preferences
-            FavouriteFragment.favouriteList = ArrayList()
-            val editor = getSharedPreferences("FAVOURITES", MODE_PRIVATE)
-            val jsonString = editor.getString("FavouriteSongs", null)
-            val typeToken = object : TypeToken<ArrayList<Data>>() {}.type
-            if (jsonString != null) {
-                val data: ArrayList<Data> =
-                    GsonBuilder().create().fromJson(jsonString, typeToken)
-                FavouriteFragment.favouriteList.addAll(data)
-            }
+            binding.bottomNav.setupWithNavController(navController)
 
 
-            val pref = getSharedPreferences("COUNTRY", MODE_PRIVATE)
-            val data1 = pref.getString("id_country", null)
-            val data2 = pref.getString("name_country", null)
-            val data3 = pref.getInt("flag_country", R.drawable.ic_language_select)
-            if (data1 != null && data2 != null) {
-                ChangeRegionFragment.id_country = data1
-                ChangeRegionFragment.name_country = data2
-                ChangeRegionFragment.flag_country = data3
+            if (requestRuntimePermission()) {
+                //for retrieving favourites data using shared preferences
+                FavouriteFragment.favouriteList = ArrayList()
+                val editor = getSharedPreferences("FAVOURITES", MODE_PRIVATE)
+                val jsonString = editor.getString("FavouriteSongs", null)
+                val typeToken = object : TypeToken<ArrayList<Data>>() {}.type
+                if (jsonString != null) {
+                    val data: ArrayList<Data> =
+                        GsonBuilder().create().fromJson(jsonString, typeToken)
+                    FavouriteFragment.favouriteList.addAll(data)
+                }
+
+
+                val pref = getSharedPreferences("COUNTRY", MODE_PRIVATE)
+                val data1 = pref.getString("id_country", null)
+                val data2 = pref.getString("name_country", null)
+                val data3 = pref.getInt("flag_country", R.drawable.ic_language_select)
+                if (data1 != null && data2 != null) {
+                    ChangeRegionFragment.id_country = data1
+                    ChangeRegionFragment.name_country = data2
+                    ChangeRegionFragment.flag_country = data3
+
+                }
+
 
             }
 
 
         }
-
-
     }
+
 
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
@@ -164,7 +153,6 @@ class MainActivity : AppCompatActivity() {
         val jsonString = GsonBuilder().create().toJson(FavouriteFragment.favouriteList)
         editor.putString("FavouriteSongs", jsonString)
         editor.apply()
-
 
 
     }
@@ -189,12 +177,12 @@ class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.R)
     @SuppressLint("SetTextI18n")
     private fun initializeLayout() {
-        val sortEditor = getSharedPreferences("SORTING", MODE_PRIVATE)
-        sortOrder = sortEditor.getInt("sortOrder", 0)
-        MusicListMA = getAllAudio()
+            val sortEditor = getSharedPreferences("SORTING", MODE_PRIVATE)
+            sortOrder = sortEditor.getInt("sortOrder", 0)
+            MusicListMA = getAllAudio()
 
 
-        //for refreshing layout on swipe from top
+            //for refreshing layout on swipe from top
     }
 
     @RequiresApi(Build.VERSION_CODES.R)
@@ -233,15 +221,18 @@ class MainActivity : AppCompatActivity() {
                     val artistName =
                         cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST))
                             ?: "Unknown"
-                    val audio = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA))
-                        ?: "Unknown"
+                    val audio =
+                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA))
+                            ?: "Unknown"
                     val audioDownload =
                         cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.IS_DOWNLOAD))
                             ?: "Unknown"
-                    val name = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE))
-                        ?: "Unknown"
-                    val id = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media._ID))
-                        ?: "Unknown"
+                    val name =
+                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE))
+                            ?: "Unknown"
+                    val id =
+                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media._ID))
+                            ?: "Unknown"
                     val duration =
                         cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))
                     val albumIdC =

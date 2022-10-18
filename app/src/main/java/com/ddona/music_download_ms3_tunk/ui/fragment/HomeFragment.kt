@@ -56,6 +56,7 @@ class HomeFragment : Fragment(), ListenedSongItemClick, GenreItemClick, Trending
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentHomeBinding.inflate(inflater)
+
         return binding.root
     }
 
@@ -163,14 +164,12 @@ class HomeFragment : Fragment(), ListenedSongItemClick, GenreItemClick, Trending
 
             binding.shimmerViewContainer.stopShimmerAnimation()
             binding.shimmerViewContainer.visibility = View.GONE
-
             binding.scrollView2.visibility = View.VISIBLE
         }
 
         val twadapter = SliderAdapter(sliderListSong, viewPager2, this)
         viewPager2.adapter = twadapter
         viewPager2.offscreenPageLimit = 3
-        viewPager2.setCurrentItem(2, true)
         viewPager2.clipToPadding = false
         viewPager2.clipChildren = false
         viewPager2.getChildAt(0).overScrollMode = RecyclerView.OVER_SCROLL_NEVER
@@ -182,7 +181,7 @@ class HomeFragment : Fragment(), ListenedSongItemClick, GenreItemClick, Trending
 
     private fun setUpTransformer() {
         val transformer = CompositePageTransformer()
-        transformer.addTransformer(MarginPageTransformer(40))
+        transformer.addTransformer(MarginPageTransformer(30))
         transformer.addTransformer { page, position ->
             val r = 1 - abs(position)
             page.scaleY = 0.85f + r * 0.14f
