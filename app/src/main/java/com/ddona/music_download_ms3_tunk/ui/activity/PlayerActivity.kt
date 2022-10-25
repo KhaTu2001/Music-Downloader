@@ -52,7 +52,6 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
     lateinit var usercase: UseCases
 
 
-    var Offline: Boolean = false
     var playoneTime: Boolean = false
     private lateinit var bottomSheet2: BottomSheetDialog
     private lateinit var adapter: PlaylistAdapter
@@ -81,7 +80,12 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         super.onCreate(savedInstanceState)
         binding = ActivityPlayerBinding.inflate(layoutInflater)
 
-        adapter = PlaylistAdapter(this, usercase, true, this)
+        if (intent.getStringExtra("from") == "MusicAdapter") {
+            binding.addToPlaylist.visibility = View.VISIBLE
+            binding.addToFavorite.visibility = View.GONE
+        }
+
+        adapter = PlaylistAdapter(this, usercase, true, this, null)
 
         lifecycleScope.launch() {
             usercase.getAllPlaylist().collect {
@@ -99,11 +103,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
 
         setContentView(binding.root)
 
-        if (intent.getStringExtra("from") == "MusicAdapter") {
-            Offline = true
-            binding.addToPlaylist.visibility = View.VISIBLE
-            binding.addToFavorite.visibility = View.GONE
-        }
+
 
         binding.backBtn.setOnClickListener {
             finish()
@@ -270,6 +270,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         try {
             if (musicService!!.mediaPlayer == null)
                 musicService!!.mediaPlayer = MediaPlayer()
+
             musicService!!.mediaPlayer!!.reset()
             musicService!!.mediaPlayer!!.setDataSource(musicList[songPosition].audio)
             musicService!!.mediaPlayer!!.prepare()
@@ -349,6 +350,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
     }
 
     private fun prevNextSong(incerment: Boolean, isClickNextPrev: Boolean) {
+
         if (incerment && isClickNextPrev) {
             setSongPosition(increment = true, isClickNextPrev = true)
             if (isShuffer) {
@@ -412,6 +414,8 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
             shufferPosition(false)
             inshufferMusic()
         }
+
+
         createMediaPlayer()
         setLayout()
 
@@ -460,7 +464,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
 
 
     fun showBottomSheetDialog() {
-        val bottomSheet: BottomSheetDialog = BottomSheetDialog(this, R.style.BottomSheetStyle)
+        val bottomSheet: BottomSheetDialog = BottomSheetDialog(this)
         bottomSheet.setContentView(R.layout.add_option_dialog)
 
 
@@ -468,10 +472,8 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         val addFavorite = bottomSheet.findViewById<View>(R.id.ln_add_to_favorite)
         val addDownload = bottomSheet.findViewById<View>(R.id.ln_add_to_download)
 
-
-        if (Offline == true) {
+        if (intent.getStringExtra("from") == "MusicAdapter")
             addDownload?.visibility = View.GONE
-        }
 
 
         addPlaylist?.setOnClickListener()
@@ -522,7 +524,6 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
     fun showAddToPlaylistBottomSheet() {
 
         val createPLBtn = bottomSheet2.findViewById<View>(R.id.ln_create_playlist)
-        val lnSearch = bottomSheet2.findViewById<View>(R.id.ln_search)
         val searchText =
             bottomSheet2.findViewById<EditText>(R.id.edt_search)
 
@@ -534,6 +535,13 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
                     if (editable.toString().isNotEmpty()) {
                         CoroutineScope(Dispatchers.IO).launch {
                             usercase.getAllPlaylistByName.invoke(editable.toString()).collect {
+                                adapter.submitList(it)
+                            }
+                        }
+                    }
+                    else{
+                        lifecycleScope.launch() {
+                            usercase.getAllPlaylist().collect {
                                 adapter.submitList(it)
                             }
                         }
@@ -585,7 +593,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
 
     fun addPlaylist(name: String, context: Context) {
         var playlistExists = false
-        for (i in PlaylistAdapter.playlistList) {
+        for (i in MainActivity.playlistList) {
             if (name == i.playlistName) {
                 playlistExists = true
                 break
@@ -629,7 +637,6 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
             artistId = musicList[songPosition].artistId,
             audio = musicList[songPosition].audio,
             artistName = musicList[songPosition].artistName,
-            audioDownload = musicList[songPosition].audioDownload,
             duration = musicList[songPosition].duration,
             image = musicList[songPosition].image,
             name = musicList[songPosition].name,

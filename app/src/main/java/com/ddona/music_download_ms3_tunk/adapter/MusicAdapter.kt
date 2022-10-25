@@ -1,18 +1,19 @@
 package com.ddona.music_download_ms3_tunk.adapter
 
-import android.app.Activity
+import android.content.ContentUris
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
+import android.database.Cursor
+import android.media.RingtoneManager
+import android.provider.MediaStore
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import android.widget.SearchView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -29,6 +30,8 @@ import com.ddona.music_download_ms3_tunk.user_case.UseCases
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.*
+import java.io.File
+
 
 private lateinit var bottomSheet2: BottomSheetDialog
 private lateinit var music2: Data
@@ -57,7 +60,7 @@ class MusicAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyHolder {
 
 
-        adapter = userCases?.let { PlaylistAdapter(context, it, true, this) }!!
+        adapter = userCases?.let { PlaylistAdapter(context, it, true, this, null) }!!
 
         CoroutineScope(Dispatchers.IO).launch {
             userCases.getAllPlaylist.invoke().collect {
@@ -142,7 +145,7 @@ class MusicAdapter(
     fun showBottomSheetDialogAdapter(data: Data) {
         music2 = data
         val bottomSheet: BottomSheetDialog =
-            BottomSheetDialog(context, R.style.BottomSheetStyle)
+            BottomSheetDialog(context)
         bottomSheet.setContentView(R.layout.add_option_dialog)
 
 
@@ -185,18 +188,24 @@ class MusicAdapter(
                 bottomSheet2.findViewById<EditText>(R.id.edt_search)
 
             var job: Job? = null
-                searchText?.addTextChangedListener { editable ->
-                    job?.cancel()
-                    job = MainScope().launch {
-                        editable?.let {
-                            if (editable.toString().isNotEmpty()) {
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    userCases?.getAllPlaylistByName?.invoke(editable.toString())
-                                        ?.collect {
-                                            adapter.submitList(it)
-                                        }
+            searchText?.addTextChangedListener { editable ->
+                job?.cancel()
+                job = MainScope().launch {
+                    editable?.let {
+                        if (editable.toString().isNotEmpty()) {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                userCases?.getAllPlaylistByName?.invoke(editable.toString())
+                                    ?.collect {
+                                        adapter.submitList(it)
+                                    }
+                            }
+                        } else {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                userCases?.getAllPlaylist?.let { it1 -> it1() }?.collect {
+                                    adapter.submitList(it)
                                 }
                             }
+                        }
                     }
                 }
             }
@@ -206,6 +215,67 @@ class MusicAdapter(
             }
             bottomSheet2.show()
 
+        }
+
+        setRingtone?.setOnClickListener {
+
+            val path = data.audio
+
+            val file = File(path)
+            val contentValues = ContentValues()
+            contentValues.put(MediaStore.MediaColumns.DATA, file.getAbsolutePath())
+            val filterName: String = path.substring(path.lastIndexOf("/") + 1)
+            contentValues.put(MediaStore.MediaColumns.TITLE, filterName)
+            contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "audio/mp3")
+            contentValues.put(MediaStore.MediaColumns.SIZE, file.length())
+            contentValues.put(MediaStore.Audio.Media.IS_RINGTONE, true)
+            val uri = MediaStore.Audio.Media.getContentUriForPath(path)
+            val cursor: Cursor? = context.contentResolver.query(
+                uri!!, null, MediaStore.MediaColumns.DATA + "=?", arrayOf<String>(
+                    path
+                ), null
+            )
+            if (cursor != null && cursor.moveToFirst() && cursor.getCount() > 0) {
+                val id: String = cursor.getString(0)
+                contentValues.put(MediaStore.Audio.Media.IS_RINGTONE, true)
+                context.contentResolver.update(
+                    uri, contentValues, MediaStore.MediaColumns.DATA + "=?", arrayOf<String>(
+                        path
+                    )
+                )
+                val newuri = ContentUris.withAppendedId(uri!!, java.lang.Long.valueOf(id))
+                try {
+                    RingtoneManager.setActualDefaultRingtoneUri(
+                        context,
+                        RingtoneManager.TYPE_RINGTONE,
+                        newuri
+                    )
+                    Toast.makeText(context, "Set as Ringtone Successfully.", Toast.LENGTH_SHORT)
+                        .show()
+                } catch (t: Throwable) {
+                    t.printStackTrace()
+                }
+                cursor.close()
+            }
+
+//            val values = ContentValues()
+//            values.put(MediaStore.MediaColumns.DATA, data.audio)
+//            values.put(MediaStore.MediaColumns.TITLE, data.name)
+//            values.put(MediaStore.MediaColumns.MIME_TYPE, "audio/mp3")
+//            values.put(MediaStore.Audio.Media.IS_RINGTONE, true)
+//            values.put(MediaStore.Audio.Media.IS_NOTIFICATION, false)
+//            values.put(MediaStore.Audio.Media.IS_ALARM, false)
+//            values.put(MediaStore.Audio.Media.IS_MUSIC, false)
+//
+//
+//            context.contentResolver.delete(
+//                MediaStore.Audio.Media.INTERNAL_CONTENT_URI,
+//                MediaStore.Audio.Media.TITLE + " = \"Sonify\"",
+//                null
+//            )
+//            val ringUri: Uri? =
+//                context.contentResolver.insert(MediaStore.Audio.Media.INTERNAL_CONTENT_URI, values)
+//            RingtoneManager.setActualDefaultRingtoneUri(context, RingtoneManager.TYPE_ALARM, ringUri)
         }
         bottomSheet.show()
 
@@ -246,18 +316,13 @@ class MusicAdapter(
 
     fun addPlaylist(name: String, context: Context) {
         var playlistExists = false
-        for (i in PlaylistAdapter.playlistList) {
+        for (i in MainActivity.playlistList) {
             if (name == i.playlistName) {
                 playlistExists = true
                 break
             }
         }
 
-        val customDialogsuccess = LayoutInflater.from(context)
-            .inflate(R.layout.create_playlist_successfully, PlayerActivity.binding.root, false)
-        val build = MaterialAlertDialogBuilder(context)
-        val dialogsuccess = build.setView(customDialogsuccess)
-            .create()
 
 
         if (playlistExists) Toast.makeText(context, "Playlist Exist!!", Toast.LENGTH_SHORT).show()
@@ -268,8 +333,14 @@ class MusicAdapter(
             )
 
             CoroutineScope(Dispatchers.IO).launch {
-                userCases?.addPlaylist?.invoke(tempPlaylist)
+                userCases!!.addPlaylist.invoke(tempPlaylist)
             }
+
+            val customDialogsuccess = LayoutInflater.from(context)
+                .inflate(R.layout.create_playlist_successfully, MainActivity.binding.root, false)
+            val build = MaterialAlertDialogBuilder(context)
+            val dialogsuccess = build.setView(customDialogsuccess)
+                .create()
 
 
             dialogsuccess.show()
@@ -282,7 +353,6 @@ class MusicAdapter(
         }
     }
 
-
     override fun ListSongOnClick(index: Int) {
         val music = Data(
             id = music2.id,
@@ -291,7 +361,6 @@ class MusicAdapter(
             artistId = music2.artistId,
             audio = music2.audio,
             artistName = music2.artistName,
-            audioDownload = music2.audioDownload,
             duration = music2.duration,
             image = music2.image,
             name = music2.name,

@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="4dp"
         android:theme="@style/tallerBarStyle"
-        android:progress="20"
+        android:progress="10"
         android:paddingStart="0dp"
         android:paddingEnd="0dp"
         android:progressDrawable="@drawable/custorm_seekbar"
@@ -26,17 +26,17 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraint"
         android:layout_width="match_parent"
-        android:layout_height="65dp"
+        android:layout_height="72dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:background="@color/background_nowplaying"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/song_img"
         android:layout_width="54dp"
         android:layout_height="54dp"
-        android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
         android:src="@drawable/song_img"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -47,7 +47,6 @@
         android:layout_width="160dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="8dp"
         android:gravity="center_horizontal"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -61,7 +60,7 @@
             android:fontFamily="@font/inter_semibold"
             android:text="Last Christmas"
             android:textColor="@color/white"
-            android:textSize="14dp"
+            android:textSize="13dp"
             android:textStyle="bold" />
 
         <TextView
@@ -70,8 +69,9 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter_semibold"
             android:text="Devon Lane"
+            android:alpha="0.8"
             android:textColor="@color/white"
-            android:textSize="12dp" />
+            android:textSize="11dp" />
 
 
     </LinearLayout>
@@ -82,7 +82,6 @@
         android:layout_height="wrap_content"
         android:padding="14dp"
         android:layout_marginRight="12dp"
-        android:layout_marginTop="16dp"
         android:src="@drawable/ic_play_song_icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -94,7 +93,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        android:layout_marginTop="16dp"
         android:src="@drawable/ic_clear_song"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

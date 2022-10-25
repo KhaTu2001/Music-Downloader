@@ -59,7 +59,7 @@
             android:id="@+id/top_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="12dp"
+            android:layout_marginLeft="18dp"
             android:fontFamily="@font/inter_semibold"
             android:text="Top Listened"
             android:textColor="@color/white"
@@ -68,29 +68,12 @@
 
     </LinearLayout>
 
-
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_see_all_song_genre"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginLeft="16dp"
-        android:visibility="gone"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        android:orientation="vertical"
-        tools:listitem="@layout/item_top_listened"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout4" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_see_all_song"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
-        android:layout_marginLeft="6dp"
+        android:layout_marginLeft="16dp"
         android:visibility="gone"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:orientation="vertical"

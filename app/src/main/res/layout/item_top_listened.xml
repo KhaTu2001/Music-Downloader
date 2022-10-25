@@ -91,6 +91,16 @@
                 app:layout_constraintTop_toTopOf="parent"
                 android:padding="10dp"/>
 
+            <ImageView
+                android:id="@+id/song_added"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:visibility="gone"
+                android:layout_marginRight="16dp"
+                android:src="@drawable/ic_add_to_selectlist"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 

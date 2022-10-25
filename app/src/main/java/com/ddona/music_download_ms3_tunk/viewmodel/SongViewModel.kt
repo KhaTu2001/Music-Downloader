@@ -1,16 +1,12 @@
 package com.ddona.music_download_ms3_tunk.viewmodel
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.*
-import androidx.navigation.findNavController
-import com.ddona.music_download_ms3_tunk.R
 import com.ddona.music_download_ms3_tunk.api.SongApi
 import com.ddona.music_download_ms3_tunk.callback.ConnectivityObserver
 import com.ddona.music_download_ms3_tunk.db.MusicDAO
 import com.ddona.music_download_ms3_tunk.model.*
 import com.ddona.music_download_ms3_tunk.ui.fragment.ChangeRegionFragment
-import com.ddona.music_download_ms3_tunk.ui.fragment.HomeFragmentDirections
 import com.ddona.music_download_ms3_tunk.utils.NetworkConnectivityObserver
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -39,7 +35,9 @@ class SongViewModel @Inject constructor(
     val isConnected = MutableLiveData(true)
 
     init {
-
+        viewModelScope.launch(Dispatchers.Main) {
+            getAllPlaylistList()
+        }
         connectivityObserver = NetworkConnectivityObserver(application.applicationContext)
         connectivityObserver.observe().onEach {
             if (it == ConnectivityObserver.Status.Available){
@@ -71,6 +69,7 @@ class SongViewModel @Inject constructor(
         val response = songApi.getAllGenres().data
         listGenre.postValue(response)
     }
+
 
     suspend fun getAllTopDownLoad() {
         val response = songApi.getAllTopDownLoad(ChangeRegionFragment.id_country)

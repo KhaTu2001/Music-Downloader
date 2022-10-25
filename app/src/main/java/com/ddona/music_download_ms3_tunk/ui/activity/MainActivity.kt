@@ -7,7 +7,9 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
@@ -25,7 +27,7 @@ import com.ddona.music_download_ms3_tunk.ui.fragment.ChangeRegionFragment
 import com.ddona.music_download_ms3_tunk.user_case.UseCases
 import com.ddona.music_download_ms3_tunk.model.Data
 import com.ddona.music_download_ms3_tunk.model.exitApplication
-import com.ddona.music_download_ms3_tunk.ui.fragment.HomeFragment
+import com.ddona.music_download_ms3_tunk.model.playlistMusic
 import com.ddona.music_download_ms3_tunk.viewmodel.SongViewModel
 import com.example.newsapp.fragments.FavouriteFragment
 import com.google.gson.GsonBuilder
@@ -53,22 +55,41 @@ class MainActivity : AppCompatActivity() {
     companion object {
         lateinit var binding: ActivityMainBinding
         lateinit var MusicListMA: ArrayList<Data>
-        var musicListSearch: ArrayList<Data> = ArrayList()
 
-        var search: Boolean = false
+        var playlistList: ArrayList<playlistMusic> = ArrayList()
+
+
         var sortOrder: Int = 0
         val sortingList = arrayOf(
             MediaStore.Audio.Media.DATE_ADDED + " DESC", MediaStore.Audio.Media.TITLE,
             MediaStore.Audio.Media.SIZE + " DESC"
         )
+        var permssion = 0
 
     }
+
+     private val requestPermissionLaucher = registerForActivityResult(ActivityResultContracts.RequestPermission()){
+
+        permssion = if(it){
+            1
+        }
+
+        else{
+            0
+        }
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        requestPermissionLaucher.launch(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+
 
 
 
@@ -154,6 +175,19 @@ class MainActivity : AppCompatActivity() {
         if (PlayerActivity.musicService != null) {
             binding.nowPlaying.visibility = View.VISIBLE
         }
+
+        viewModel.playlistmusicList.observe(this@MainActivity) {
+            if (it != playlistList) {
+                playlistList = ArrayList()
+                playlistList.addAll(it)
+            }
+
+
+
+        }
+
+        Log.d("SDfdsf", "onCreate: $playlistList")
+
     }
 
     private fun requestRuntimePermission(): Boolean {
@@ -193,7 +227,6 @@ class MainActivity : AppCompatActivity() {
             MediaStore.Audio.Media.TITLE,
             MediaStore.Audio.Media.ALBUM,
             MediaStore.Audio.Media.ALBUM_ID,
-            MediaStore.Audio.Media.IS_DOWNLOAD,
             MediaStore.Audio.Media.ARTIST,
             MediaStore.Audio.Media.ARTIST_ID,
             MediaStore.Audio.Media.DURATION,
@@ -223,9 +256,6 @@ class MainActivity : AppCompatActivity() {
                     val audio =
                         cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA))
                             ?: "Unknown"
-                    val audioDownload =
-                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.IS_DOWNLOAD))
-                            ?: "Unknown"
                     val name =
                         cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE))
                             ?: "Unknown"
@@ -245,11 +275,10 @@ class MainActivity : AppCompatActivity() {
                         artistId = artistId,
                         artistName = artistName,
                         audio = audio,
-                        audioDownload = audioDownload,
                         duration = duration,
                         id = id,
                         image = image,
-                        name = name,
+                        name = name
                     )
                     val file = File(music.audio)
                     if (file.exists())

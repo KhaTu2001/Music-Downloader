@@ -25,6 +25,7 @@ import com.ddona.music_download_ms3_tunk.model.favouriteCheckerID
 import com.ddona.music_download_ms3_tunk.model.playlistMusic
 import com.ddona.music_download_ms3_tunk.ui.activity.MainActivity
 import com.ddona.music_download_ms3_tunk.user_case.UseCases
+import com.ddona.music_download_ms3_tunk.utils.startDownloadSong
 import com.example.newsapp.adapter.diffutil.SongDiffCallback
 import com.example.newsapp.fragments.FavouriteFragment
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -49,7 +50,7 @@ class TopListAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
-        adapter = PlaylistAdapter(context, userCases, true, this)
+        adapter = PlaylistAdapter(context, userCases, true, this, null)
 
         CoroutineScope(Dispatchers.IO).launch {
             userCases.getAllPlaylist().collect {
@@ -122,8 +123,8 @@ class TopListAdapter(
 
     fun showBottomSheetDialogAdapter(data: Data) {
         music2 = data
-        val bottomSheet: BottomSheetDialog =
-            BottomSheetDialog(context, R.style.BottomSheetStyle)
+        val bottomSheet =
+            BottomSheetDialog(context)
         bottomSheet.setContentView(R.layout.add_option_dialog)
 
 
@@ -138,10 +139,11 @@ class TopListAdapter(
         addShareSong?.setOnClickListener {
             val shareIntent = Intent()
             shareIntent.action = Intent.ACTION_SEND
-            shareIntent.setType("text/plain")
+            shareIntent.type = "text/plain"
             shareIntent.putExtra(Intent.EXTRA_TEXT, data.audio)
             startActivity(context, Intent.createChooser(shareIntent, "Sharing Music File!!"), null)
         }
+        
         addPlaylist?.setOnClickListener()
 
         {
@@ -162,24 +164,30 @@ class TopListAdapter(
                                     adapter.submitList(it)
                                 }
                             }
+                        } else {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                userCases.getAllPlaylist().collect {
+                                    adapter.submitList(it)
+                                }
+                            }
                         }
                     }
                 }
             }
 
             createPLBtn?.setOnClickListener {
-                customAlertDialogAdapter(data)
+                customAlertDialogAdapter()
             }
 
             bottomSheet2.show()
 
         }
 
-        var fIndex = favouriteCheckerID(data.id)
-        var txtAddFavorite = bottomSheet.findViewById<TextView>(R.id.txt_add_to_favorite)
+        val fIndex = favouriteCheckerID(data.id)
+        val txtAddFavorite = bottomSheet.findViewById<TextView>(R.id.txt_add_to_favorite)
 
-        if (fIndex != -1) txtAddFavorite?.setText("Remove from Favorite")
-        else txtAddFavorite?.setText("Add to Favorite")
+        if (fIndex != -1) txtAddFavorite?.text = "Remove from Favorite"
+        else txtAddFavorite?.text = "Add to Favorite"
 
         addFavorite?.setOnClickListener()
         {
@@ -207,6 +215,14 @@ class TopListAdapter(
         }
         addDownload?.setOnClickListener()
         {
+            if(MainActivity.permssion == 1){
+                startDownloadSong(data.audio,context)
+            }
+
+            else{
+
+                Toast.makeText(context,"Permission Denied",Toast.LENGTH_LONG).show()
+            }
 
             bottomSheet.dismiss()
         }
@@ -215,7 +231,7 @@ class TopListAdapter(
     }
 
 
-    fun customAlertDialogAdapter(data: Data) {
+    private fun customAlertDialogAdapter() {
         val customDialog = LayoutInflater.from(context)
             .inflate(R.layout.create_new_playlist_dialog, MainActivity.binding.root, false)
         val binder = CreateNewPlaylistDialogBinding.bind(customDialog)
@@ -242,24 +258,20 @@ class TopListAdapter(
         }
 
         dialog.show()
-        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCanceledOnTouchOutside(false)
         dialog.window?.setGravity(Gravity.TOP)
 
     }
 
     fun addPlaylist(name: String, context: Context) {
         var playlistExists = false
-        for (i in PlaylistAdapter.playlistList) {
+        for (i in MainActivity.playlistList) {
             if (name == i.playlistName) {
-//                var check = playlistMusic(
-//
-//                )
-//                PlaylistAdapter.playlistList.remove(check)
-
                 playlistExists = true
                 break
             }
         }
+        
 
         if (playlistExists) Toast.makeText(context, "Playlist Exist!!", Toast.LENGTH_SHORT).show()
         else {
@@ -270,6 +282,21 @@ class TopListAdapter(
 
             CoroutineScope(Dispatchers.IO).launch {
                 userCases.addPlaylist.invoke(tempPlaylist)
+            }
+
+            val customDialogsuccess = LayoutInflater.from(context)
+                .inflate(R.layout.create_playlist_successfully, MainActivity.binding.root, false)
+            val build = MaterialAlertDialogBuilder(context)
+            val dialogsuccess = build.setView(customDialogsuccess)
+                .create()
+
+
+            dialogsuccess.show()
+            dialogsuccess.window?.setGravity(Gravity.TOP)
+
+            MainScope().launch {
+                delay(1000)
+                dialogsuccess.dismiss()
             }
 
 
@@ -285,7 +312,6 @@ class TopListAdapter(
             artistId = music2.artistId,
             audio = music2.audio,
             artistName = music2.artistName,
-            audioDownload = music2.audioDownload,
             duration = music2.duration,
             image = music2.image,
             name = music2.name,

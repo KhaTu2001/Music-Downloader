@@ -8,7 +8,9 @@ import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.CompositePageTransformer
 import androidx.viewpager2.widget.MarginPageTransformer
@@ -21,6 +23,8 @@ import com.ddona.music_download_ms3_tunk.ui.activity.PlayerActivity
 import com.ddona.music_download_ms3_tunk.user_case.UseCases
 import com.ddona.music_download_ms3_tunk.viewmodel.SongViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.*
+import java.lang.Runnable
 import javax.inject.Inject
 import kotlin.math.abs
 
@@ -63,7 +67,8 @@ class HomeFragment : Fragment(), ListenedSongItemClick, GenreItemClick, Trending
                 binding.shimmerViewContainer.visibility = View.VISIBLE
                 binding.scrollView2.visibility = View.GONE
                 binding.shimmerViewContainer.startShimmerAnimation()
-                Toast.makeText(requireContext(),
+                Toast.makeText(
+                    requireContext(),
                     "Network unavailable ",
                     Toast.LENGTH_SHORT
                 ).show()
@@ -147,6 +152,7 @@ class HomeFragment : Fragment(), ListenedSongItemClick, GenreItemClick, Trending
     }
 
 
+
     private val runnable = Runnable {
         viewPager2.currentItem = viewPager2.currentItem + 1
     }
@@ -156,12 +162,15 @@ class HomeFragment : Fragment(), ListenedSongItemClick, GenreItemClick, Trending
         handler = Handler(Looper.myLooper()!!)
 
         viewModel.topTrending.observe(viewLifecycleOwner) {
-            sliderListSong.addAll(it.take(10))
+            sliderListSong.addAll(it.take(5))
 
-            binding.shimmerViewContainer.stopShimmerAnimation()
-            binding.shimmerViewContainer.visibility = View.GONE
-
-            binding.scrollView2.visibility = View.VISIBLE
+            viewModel.isConnected.observe(viewLifecycleOwner) {
+                if (it == true) {
+                    binding.shimmerViewContainer.stopShimmerAnimation()
+                    binding.shimmerViewContainer.visibility = View.GONE
+                    binding.scrollView2.visibility = View.VISIBLE
+                }
+            }
         }
 
         val twadapter = SliderAdapter(sliderListSong, viewPager2, this)
@@ -273,8 +282,7 @@ class HomeFragment : Fragment(), ListenedSongItemClick, GenreItemClick, Trending
 
     override fun onResume() {
         super.onResume()
-
-
+        
 
         binding.shimmerViewContainer.startShimmerAnimation()
         if (binding.shimmerViewContainer.visibility == View.GONE)

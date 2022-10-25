@@ -1,111 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-
-    android:id="@+id/linearLayout3"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/background"
-    android:gravity="center_vertical"
-    android:orientation="horizontal">
-
-    <androidx.cardview.widget.CardView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="6dp"
-        app:cardCornerRadius="8dp">
-
-        <ImageView
-            android:id="@+id/song_img"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:scaleType="fitXY"
-            android:src="@drawable/song_img" />
-    </androidx.cardview.widget.CardView>
-
+    app:cardCornerRadius="8dp">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:id="@+id/linearLayout3"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:background="@color/background_downloading"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/song_named"
+        <androidx.cardview.widget.CardView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:fontFamily="@font/inter_semibold"
-            android:text="Last "
-            android:textColor="@color/white"
-            android:textSize="14dp"
-            android:textStyle="bold" />
+            android:layout_margin="6dp"
+            app:cardCornerRadius="8dp">
 
-        <TextView
-            android:id="@+id/song_author"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="4dp"
-            android:alpha="0.7"
-            android:fontFamily="@font/inter_semibold"
-            android:text="Devon Lane"
-            android:textColor="@color/white"
-            android:textSize="12dp" />
+            <ImageView
+                android:id="@+id/song_img"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/song_img" />
+        </androidx.cardview.widget.CardView>
+
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:orientation="horizontal">
-
-            <SeekBar
-                android:id="@+id/seekBar"
-                android:layout_width="220dp"
-                android:layout_height="3dp"
-                android:background="@color/background"
-                android:progress="100"
-                android:layout_gravity="center_vertical"
-                android:progressBackgroundTint="@color/gray"
-                android:progressTint="@color/colorPrimary"
-                android:theme="@style/tallerBarStyle"
-                android:thumb="@color/gray"
-                android:thumbTint="@color/gray"
-                app:layout_constraintEnd_toEndOf="parent" />
+            android:orientation="vertical">
 
             <TextView
-                android:id="@+id/progress_curren"
+                android:id="@+id/song_named"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="40%"
-                android:textColor="@color/colorPrimary"
+                android:layout_marginLeft="14dp"
+                android:fontFamily="@font/inter_semibold"
+                android:text="Last "
+                android:textColor="@color/white"
+                android:textSize="14dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/song_author"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="14dp"
+                android:layout_marginTop="4dp"
+                android:alpha="0.7"
+                android:fontFamily="@font/inter_semibold"
+                android:text="Devon Lane"
+                android:textColor="@color/white"
                 android:textSize="12dp" />
 
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:orientation="horizontal">
+
+                <SeekBar
+                    android:id="@+id/seekBar"
+                    android:layout_width="220dp"
+                    android:layout_height="3dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@color/background_downloading"
+                    android:backgroundTint="@color/gray"
+                    android:progress="20"
+                    android:progressBackgroundTintMode="screen"
+                    android:progressDrawable="@drawable/custorm_seekbar"
+                    android:progressTint="@color/colorPrimary"
+                    android:theme="@style/tallerBarStyle"
+                    android:thumb="@drawable/custom_thumb"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+                <TextView
+                    android:id="@+id/progress_curren"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="40%"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="12dp" />
+
+
+            </LinearLayout>
 
         </LinearLayout>
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/song_option"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="16dp"
+                android:padding="10dp"
+                android:src="@drawable/ic_song_option"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
     </LinearLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ImageView
-            android:id="@+id/song_option"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="16dp"
-            android:padding="10dp"
-            android:src="@drawable/ic_song_option"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-</LinearLayout>
-
+</androidx.cardview.widget.CardView>
 
 
 

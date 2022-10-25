@@ -18,7 +18,7 @@
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:src="@drawable/ic_download_song"
+            android:src="@drawable/ic_pause_download"
             android:backgroundTint="@color/white"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="20dp"/>
@@ -48,7 +48,7 @@
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:src="@drawable/ic_download_song"
+            android:src="@drawable/ic_remove_download"
             android:backgroundTint="@color/white"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="20dp"/>

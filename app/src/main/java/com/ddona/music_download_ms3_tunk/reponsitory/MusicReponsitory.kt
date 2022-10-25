@@ -14,7 +14,9 @@ interface MusicRepository {
 
     suspend fun countSong(playlist_id: Int): Flow<Int>
 
-    suspend fun checkName(playlist_name: String): Flow<Int>
+    fun checkName(playlist_name: String): Flow<Int>
+
+    fun checkSongID(playlistID : Int,id: String): Flow<Int>
 
 
     suspend fun addMusicToPlaylist(data: Data)

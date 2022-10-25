@@ -21,10 +21,10 @@ interface MusicDAO {
     @Query("SELECT * FROM playlistMusic Where playlistName LIKE '%' || :playlistName || '%' ")
     fun getAllPlaylistByName(playlistName:String): Flow<List<playlistMusic>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addSongtoPlaylist(data: Data)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addPlaylist(playlistMusic: playlistMusic)
 
     @Query("SELECT COUNT(name) FROM music where playlist_id = :playlistId")
@@ -32,6 +32,9 @@ interface MusicDAO {
 
     @Query("SELECT COUNT(playlistName) FROM playlistMusic where playlistName = :playlistName")
     fun checkName(playlistName : String): Flow<Int>
+
+    @Query("SELECT COUNT(id) FROM music where playlist_id = :playlistID and id = :id")
+    fun checkSongName(playlistID : Int,id: String): Flow<Int>
 
     @Query("UPDATE playlistMusic set playlistName = :playlistName Where playList_ID = :id")
     fun updatePlayListName(playlistName:String,id:Int)

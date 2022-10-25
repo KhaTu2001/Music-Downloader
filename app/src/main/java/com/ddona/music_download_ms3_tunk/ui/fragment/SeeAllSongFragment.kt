@@ -2,7 +2,9 @@ package com.ddona.music_download_ms3_tunk.ui.fragment
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.*
+import androidx.core.view.marginLeft
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 
@@ -11,7 +13,6 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import com.ddona.music_download_ms3_tunk.adapter.*
 import com.ddona.music_download_ms3_tunk.callback.GenreItemClick
-import com.ddona.music_download_ms3_tunk.callback.ListSongItemClick
 import com.ddona.music_download_ms3_tunk.callback.ListenedSongItemClick
 import com.ddona.music_download_ms3_tunk.databinding.FragmentSeeAllSongBinding
 import com.ddona.music_download_ms3_tunk.model.Data
@@ -23,7 +24,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 
-class SeeAllSongFragment : Fragment(), ListenedSongItemClick, GenreItemClick ,ListSongItemClick{
+class SeeAllSongFragment : Fragment(), ListenedSongItemClick, GenreItemClick {
 
     private lateinit var binding: FragmentSeeAllSongBinding
 
@@ -31,6 +32,7 @@ class SeeAllSongFragment : Fragment(), ListenedSongItemClick, GenreItemClick ,Li
     var topListSong: ArrayList<Data> = ArrayList()
     var downloadListSong: ArrayList<Data> = ArrayList()
     var trendingListSong: ArrayList<Data> = ArrayList()
+
     companion object{
         var localListSong:  ArrayList<Data> = ArrayList()
     }
@@ -48,7 +50,6 @@ class SeeAllSongFragment : Fragment(), ListenedSongItemClick, GenreItemClick ,Li
 
         if(args.data == 0){
             topTrendingRV()
-
         }
 
         if(args.data == 1){
@@ -65,6 +66,7 @@ class SeeAllSongFragment : Fragment(), ListenedSongItemClick, GenreItemClick ,Li
 
         return binding.root
     }
+
     private fun topTrendingRV() {
         binding.topTextview.text = "Top Trending"
         val ttadapter = TopListAdapter(requireContext(),this,usercase)
@@ -74,9 +76,9 @@ class SeeAllSongFragment : Fragment(), ListenedSongItemClick, GenreItemClick ,Li
             ttadapter.submitList( it)
             trendingListSong.addAll(it)
 
+
             binding.shimmerViewContainer.stopShimmerAnimation()
             binding.shimmerViewContainer.visibility = View.GONE
-
             binding.rvSeeAllSong.visibility = View.VISIBLE
         }
         localListSong = trendingListSong
@@ -85,16 +87,17 @@ class SeeAllSongFragment : Fragment(), ListenedSongItemClick, GenreItemClick ,Li
     private fun genreRV() {
         binding.topTextview.text = "Genres"
         val gradapter = SeeAllGenreAdapter(this)
-        binding.rvSeeAllSongGenre.setHasFixedSize(true)
-        binding.rvSeeAllSongGenre.layoutManager =
+        binding.rvSeeAllSong.setHasFixedSize(true)
+        binding.rvSeeAllSong.layoutManager =
             GridLayoutManager(context, 2)
-        binding.rvSeeAllSongGenre.adapter = gradapter
+        binding.rvSeeAllSong.adapter = gradapter
         viewModel.listGenre.observe(viewLifecycleOwner) {
             gradapter.submitList(it)
+
+            binding.rvSeeAllSong.marginLeft
             binding.shimmerViewContainer.stopShimmerAnimation()
             binding.shimmerViewContainer.visibility = View.GONE
-
-            binding.rvSeeAllSongGenre.visibility = View.VISIBLE
+            binding.rvSeeAllSong.visibility = View.VISIBLE
         }
     }
 
@@ -133,9 +136,12 @@ class SeeAllSongFragment : Fragment(), ListenedSongItemClick, GenreItemClick ,Li
     override fun GenreOnClick(keySearch: String, nameGenre: String) {
         val keysearch = keySearch
         val nameGenre = nameGenre
-        val action = SeeAllSongFragmentDirections.actionSeeAllSongFragmentToSeeAllSongByGenreFragment(keysearch,nameGenre)
+        val action = SeeAllSongFragmentDirections.actionSeeAllSongFragmentToSeeAllSongByGenreFragment(
+            keysearch,
+            nameGenre
+        )
         Navigation.findNavController(binding.root).navigate(action)
-
+        Log.d("dfgdf", "GenreOnClick:$keysearch , $nameGenre  ")
     }
 
 
@@ -151,14 +157,16 @@ class SeeAllSongFragment : Fragment(), ListenedSongItemClick, GenreItemClick ,Li
     override fun onResume() {
         super.onResume()
         binding.shimmerViewContainer.startShimmerAnimation()
-        if (binding.shimmerViewContainer.visibility == View.GONE)
+
+        if (binding.shimmerViewContainer.visibility == View.GONE){
             binding.rvSeeAllSong.visibility = View.VISIBLE
+        }
+
+
 
     }
 
-    override fun ListSongOnClick(index: Int) {
-        TODO("Not yet implemented")
-    }
+
 
 
 }

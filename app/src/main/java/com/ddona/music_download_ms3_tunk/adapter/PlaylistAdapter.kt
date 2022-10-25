@@ -1,22 +1,20 @@
 package com.ddona.music_download_ms3_tunk.adapter
 
 import android.content.Context
-import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.ddona.music_download_ms3_tunk.R
 import com.ddona.music_download_ms3_tunk.callback.ListSongItemClick
+import com.ddona.music_download_ms3_tunk.callback.PlaylistListSongItemClick
 import com.ddona.music_download_ms3_tunk.databinding.DeletePlaylistDialogBinding
 import com.ddona.music_download_ms3_tunk.databinding.ItemPlaylistBinding
 import com.ddona.music_download_ms3_tunk.databinding.RenamePlaylistDialogBinding
 import com.ddona.music_download_ms3_tunk.model.playlistMusic
-import com.ddona.music_download_ms3_tunk.ui.activity.PlaylistDetailsActivity
+import com.ddona.music_download_ms3_tunk.ui.activity.PlayerActivity
 import com.ddona.music_download_ms3_tunk.user_case.UseCases
 import com.example.newsapp.adapter.diffutil.PlaylistDiffCallback
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -30,14 +28,14 @@ class PlaylistAdapter(
     private val useCases: UseCases,
     private val addMusic: Boolean = false,
     private val callback: ListSongItemClick?,
+    private val callback2: PlaylistListSongItemClick?
+
 
 
     ) : ListAdapter<playlistMusic, PlaylistAdapter.ViewHolder>(
     PlaylistDiffCallback()
 ) {
-    companion object {
-        var playlistList: ArrayList<playlistMusic> = ArrayList()
-    }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
@@ -57,11 +55,6 @@ class PlaylistAdapter(
     inner class ViewHolder(private var binding: ItemPlaylistBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(playlistMusic: playlistMusic) {
-
-
-            if (playlistMusic in playlistList) playlistList = playlistList
-             else playlistList.add(playlistMusic)
-
 
 //            if(playlistMusic.playlistName == playlistList[adapterPosition].playlistName) playlistList.removeAt(adapterPosition)
 
@@ -102,19 +95,15 @@ class PlaylistAdapter(
             if (addMusic == true) {
                 binding.root.setOnClickListener {
                     index?.let { it1 -> callback?.ListSongOnClick(it1) }
+
                 }
             } else {
                 binding.root.setOnClickListener {
-                    val intent = Intent(context, PlaylistDetailsActivity::class.java)
-                    intent.putExtra("index", index)
-                    intent.putExtra("playlistName", playlistMusic.playlistName)
-                    ContextCompat.startActivity(context, intent, null)
+
+                    index?.let { it1 -> callback2?.ListSongOnClick(it1,playlistMusic.playlistName) }
+
                 }
             }
-
-
-            Log.d("dfgdfdg", "bind: $playlistList")
-
 
             binding.playlistOption.setOnClickListener {
                 showBottomSheetPlaylist(playlistMusic,binding.root)
@@ -124,7 +113,7 @@ class PlaylistAdapter(
     }
 
     fun showBottomSheetPlaylist(playlistMusic: playlistMusic,viewGroup: ViewGroup) {
-        val bottomSheet: BottomSheetDialog =
+        val bottomSheet =
             BottomSheetDialog(context)
         bottomSheet.setContentView(R.layout.bottomsheet_playlist_option)
 

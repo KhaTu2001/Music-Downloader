@@ -14,9 +14,11 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.ddona.music_download_ms3_tunk.R
 import com.ddona.music_download_ms3_tunk.databinding.FragmentNowPlayingBinding
+import com.ddona.music_download_ms3_tunk.service.MusicService
 import com.ddona.music_download_ms3_tunk.ui.activity.MainActivity
 import com.ddona.music_download_ms3_tunk.ui.activity.PlayerActivity
 import com.ddona.music_download_ms3_tunk.ui.activity.PlayerActivity.Companion.musicService
+import kotlinx.coroutines.Runnable
 
 
 class NowPlaying : Fragment() {
@@ -24,8 +26,7 @@ class NowPlaying : Fragment() {
         lateinit var binding: FragmentNowPlayingBinding
     }
 
-    private lateinit var runnable: Runnable
-
+    lateinit var runnable: Runnable
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,9 +46,10 @@ class NowPlaying : Fragment() {
                 musicService!!.audioManager.abandonAudioFocus(musicService)
                 musicService!!.stopForeground(true)
                 musicService!!.mediaPlayer!!.stop()
-//                musicService = null
+                musicService = null
                 binding.root.visibility = View.GONE
                 MainActivity.binding.nowPlaying.visibility = View.GONE
+//                seekBarSetup(null)
             }
         }
 
@@ -59,14 +61,15 @@ class NowPlaying : Fragment() {
             ContextCompat.startActivity(requireContext(), intent, null)
         }
 
-        binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
+        binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if(fromUser) {
+                if (fromUser) {
                     musicService!!.mediaPlayer!!.seekTo(progress)
                     musicService!!.showNotification(if (PlayerActivity.isPlaying) R.drawable.ic_pause_song_icon else R.drawable.ic_play_song_icon)
 
                 }
             }
+
             override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
             override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
         })
@@ -76,6 +79,13 @@ class NowPlaying : Fragment() {
         return binding.root
     }
 
+    fun seekBarSetup(musicService: MusicService) {
+        runnable = Runnable {
+            binding.seekBar.progress = musicService!!.mediaPlayer!!.currentPosition
+            Handler(Looper.getMainLooper()).postDelayed(runnable, 200)
+        }
+        Handler(Looper.getMainLooper()).postDelayed(runnable, 0)
+    }
 
     override fun onResume() {
         super.onResume()
@@ -83,38 +93,35 @@ class NowPlaying : Fragment() {
 
         if (musicService != null) {
             binding.root.visibility = View.VISIBLE
-            binding.seekBar.progress = musicService!!.mediaPlayer!!.currentPosition.toFloat().toInt()
+            binding.seekBar.progress =
+                musicService!!.mediaPlayer!!.currentPosition.toFloat().toInt()
             binding.seekBar.max = musicService!!.mediaPlayer!!.duration.toFloat().toInt()
 
-            runnable = Runnable {
-                binding.seekBar.progress = musicService!!.mediaPlayer!!.currentPosition
-                Handler(Looper.getMainLooper()).postDelayed(runnable, 200)
-            }
-
-            Handler(Looper.getMainLooper()).postDelayed(runnable, 0)
+            seekBarSetup(musicService!!)
 
             binding.songNamed.isSelected = true
             binding.authorName.isSelected = true
             Glide.with(requireContext())
                 .load(PlayerActivity.musicList[PlayerActivity.songPosition].image)
-                .apply(RequestOptions().placeholder(R.drawable.music_player_icon_slash_screen).centerCrop())
+                .apply(
+                    RequestOptions().placeholder(R.drawable.music_player_icon_slash_screen)
+                        .centerCrop()
+                )
                 .into(binding.songImg)
             binding.songNamed.text = PlayerActivity.musicList[PlayerActivity.songPosition].name
-            binding.authorName.text = PlayerActivity.musicList[PlayerActivity.songPosition].artistName
+            binding.authorName.text =
+                PlayerActivity.musicList[PlayerActivity.songPosition].artistName
             if (PlayerActivity.isPlaying) binding.PlaypauseBtnNP.setImageResource(R.drawable.ic_pause_song_icon)
             else binding.PlaypauseBtnNP.setImageResource(R.drawable.ic_play_song_icon)
 
         }
-//        else{
-//            Handler(Looper.getMainLooper()).removeCallbacks(runnable)
-//        }
+
     }
 
 
-
-     private fun playMusic() {
+    private fun playMusic() {
         PlayerActivity.isPlaying = true
-         musicService!!.mediaPlayer!!.start()
+        musicService!!.mediaPlayer!!.start()
         binding.PlaypauseBtnNP.setImageResource(R.drawable.ic_pause_song_icon)
         musicService!!.showNotification(R.drawable.ic_pause_song_icon)
     }

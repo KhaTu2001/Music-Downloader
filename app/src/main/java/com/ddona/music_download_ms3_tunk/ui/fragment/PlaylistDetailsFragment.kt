@@ -1,21 +1,23 @@
-package com.ddona.music_download_ms3_tunk.ui.activity
+package com.ddona.music_download_ms3_tunk.ui.fragment
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Context
 import android.os.Bundle
-import android.util.Log
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
-import androidx.activity.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.ddona.music_download_ms3_tunk.R
 import com.ddona.music_download_ms3_tunk.adapter.PlaylistDetailsAdapter
-import com.ddona.music_download_ms3_tunk.databinding.ActivityPlaylistDetailsBinding
-import com.ddona.music_download_ms3_tunk.databinding.DeletePlaylistDialogBinding
-import com.ddona.music_download_ms3_tunk.databinding.RenamePlaylistDialogBinding
+import com.ddona.music_download_ms3_tunk.databinding.*
 import com.ddona.music_download_ms3_tunk.user_case.UseCases
 import com.ddona.music_download_ms3_tunk.viewmodel.SongViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -25,45 +27,47 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
 @AndroidEntryPoint
-class PlaylistDetailsActivity : AppCompatActivity() {
+class PlaylistDetailsFragment : Fragment() {
+
 
     @Inject
     lateinit var usercase: UseCases
 
-    private lateinit var binding: ActivityPlaylistDetailsBinding
+    val args: PlaylistDetailsFragmentArgs by navArgs()
+
+    private lateinit var binding: FragmentPlaylistDetailsBinding
     private lateinit var adapter: PlaylistDetailsAdapter
-    val viewModel: SongViewModel by viewModels()
+    val viewModel: SongViewModel by activityViewModels()
 
-    companion object {
-        var currentPlaylistPos: Int = -1
-        var playlistName: String = ""
+    var currentPlaylistPos: Int = -1
+    var playlistName: String = ""
 
-    }
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
 
+        binding = FragmentPlaylistDetailsBinding.inflate(inflater)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        binding = ActivityPlaylistDetailsBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        currentPlaylistPos = intent.extras?.get("index") as Int
-        playlistName = intent.extras?.get("playlistName") as String
+        currentPlaylistPos = args.currentPlaylist
+        playlistName = args.playlistName
 
 
+        binding.btnAddSong.setOnClickListener {
+            val action =
+                PlaylistDetailsFragmentDirections.actionPlaylistDetailsFragmentToSelectionFragment(
+                    currentPlaylistPos, 1
+                )
+            findNavController().navigate(action)
+        }
 
         binding.playlistDetailsRV.setHasFixedSize(true)
         binding.playlistNamed.text = playlistName
-        binding.playlistDetailsRV.layoutManager = LinearLayoutManager(this)
-        adapter = PlaylistDetailsAdapter(this,usercase, currentPlaylistPos)
+        binding.playlistDetailsRV.layoutManager = LinearLayoutManager(requireContext())
+        adapter = PlaylistDetailsAdapter(requireContext(), usercase, currentPlaylistPos)
         binding.playlistDetailsRV.adapter = adapter
-
-        binding.clearFragment.setOnClickListener {
-            finish()
-        }
-        Log.d("fdsfsdfdsf", "showBottomSheetPlaylist: $currentPlaylistPos")
-
 
 
 
@@ -73,7 +77,7 @@ class PlaylistDetailsActivity : AppCompatActivity() {
                 binding.txtCountSong.text = it.size.toString() + " Songs"
 
                 if (it.size >= 1) {
-                    Glide.with(applicationContext)
+                    Glide.with(requireContext())
                         .load(it[0].image)
                         .apply(
                             RequestOptions().placeholder(R.drawable.ic_new_playlist).centerCrop()
@@ -82,7 +86,7 @@ class PlaylistDetailsActivity : AppCompatActivity() {
                 }
 
                 if (it.size >= 2) {
-                    Glide.with(applicationContext)
+                    Glide.with(requireContext())
                         .load(it[1].image)
                         .apply(
                             RequestOptions().placeholder(R.drawable.ic_new_playlist).centerCrop()
@@ -90,7 +94,7 @@ class PlaylistDetailsActivity : AppCompatActivity() {
                         .into(binding.secondSongImg)
                 }
                 if (it.size >= 3) {
-                    Glide.with(applicationContext)
+                    Glide.with(requireContext())
                         .load(it[2].image)
                         .apply(
                             RequestOptions().placeholder(R.drawable.ic_new_playlist).centerCrop()
@@ -98,7 +102,7 @@ class PlaylistDetailsActivity : AppCompatActivity() {
                         .into(binding.threeSongImg)
                 }
                 if (it.size >= 4) {
-                    Glide.with(applicationContext)
+                    Glide.with(requireContext())
                         .load(it[3].image)
                         .apply(
                             RequestOptions().placeholder(R.drawable.ic_new_playlist)
@@ -119,6 +123,7 @@ class PlaylistDetailsActivity : AppCompatActivity() {
             showBottomSheetPlaylist()
         }
 
+        return binding.root
     }
 
     override fun onResume() {
@@ -126,11 +131,18 @@ class PlaylistDetailsActivity : AppCompatActivity() {
         binding.shimmerViewContainer.startShimmerAnimation()
         if (binding.shimmerViewContainer.visibility == View.GONE)
             binding.playlistDetailsRV.visibility = View.VISIBLE
+        binding.root.hideKeyboard()
+    }
+
+    fun View.hideKeyboard() {
+        val inputManager =
+            context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputManager.hideSoftInputFromWindow(windowToken, 0)
     }
 
     fun showBottomSheetPlaylist() {
         val bottomSheet: BottomSheetDialog =
-            BottomSheetDialog(this)
+            BottomSheetDialog(requireContext())
         bottomSheet.setContentView(R.layout.bottomsheet_playlist_option)
 
         val reNamePlayList = bottomSheet.findViewById<View>(R.id.ln_rename_playlist)
@@ -138,10 +150,10 @@ class PlaylistDetailsActivity : AppCompatActivity() {
 
 
         reNamePlayList?.setOnClickListener {
-            val customDialog = LayoutInflater.from(this)
+            val customDialog = LayoutInflater.from(context)
                 .inflate(R.layout.rename_playlist_dialog, binding.root, false)
             val binder = RenamePlaylistDialogBinding.bind(customDialog)
-            val builder = MaterialAlertDialogBuilder(this)
+            val builder = MaterialAlertDialogBuilder(requireContext())
             val dialog = builder.setView(customDialog)
                 .create()
 
@@ -161,7 +173,11 @@ class PlaylistDetailsActivity : AppCompatActivity() {
 
                     }
                 binding.playlistNamed.text = playlistName
-                Toast.makeText(this, "Rename playlist to $playlistName successfully!!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    "Rename playlist to $playlistName successfully!!",
+                    Toast.LENGTH_SHORT
+                ).show()
                 dialog.dismiss()
                 bottomSheet.dismiss()
 
@@ -178,10 +194,10 @@ class PlaylistDetailsActivity : AppCompatActivity() {
 
         reMovePlayList?.setOnClickListener {
 
-            val customDialog = LayoutInflater.from(this)
+            val customDialog = LayoutInflater.from(context)
                 .inflate(R.layout.delete_playlist_dialog, binding.root, false)
             val binder = DeletePlaylistDialogBinding.bind(customDialog)
-            val builder = MaterialAlertDialogBuilder(this)
+            val builder = MaterialAlertDialogBuilder(requireContext())
             val dialog = builder.setView(customDialog)
                 .create()
 
@@ -193,8 +209,7 @@ class PlaylistDetailsActivity : AppCompatActivity() {
                     usercase.deletePlaylistUserCase.invoke(currentPlaylistPos)
                     usercase.deleteMusicUserCase.invoke(currentPlaylistPos)
                 }
-                finish()
-                Toast.makeText(this, "Remove playlist successfully!!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Remove playlist successfully!!", Toast.LENGTH_SHORT).show()
 
             }
 

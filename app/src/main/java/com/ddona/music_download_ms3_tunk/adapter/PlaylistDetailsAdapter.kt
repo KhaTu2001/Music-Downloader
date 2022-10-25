@@ -7,24 +7,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.startActivity
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.ddona.music_download_ms3_tunk.R
-import com.ddona.music_download_ms3_tunk.callback.ListenedSongItemClick
-import com.ddona.music_download_ms3_tunk.callback.TrendingSongItemClick
 import com.ddona.music_download_ms3_tunk.databinding.DeletePlaylistDialogBinding
 import com.ddona.music_download_ms3_tunk.databinding.ItemTopListenedBinding
-import com.ddona.music_download_ms3_tunk.databinding.ItemTopTrendingBinding
-import com.ddona.music_download_ms3_tunk.databinding.RenamePlaylistDialogBinding
 import com.ddona.music_download_ms3_tunk.model.Data
 import com.ddona.music_download_ms3_tunk.model.favouriteCheckerID
-import com.ddona.music_download_ms3_tunk.ui.activity.MainActivity
 import com.ddona.music_download_ms3_tunk.ui.activity.PlayerActivity
-import com.ddona.music_download_ms3_tunk.ui.activity.PlaylistDetailsActivity
 import com.ddona.music_download_ms3_tunk.ui.fragment.MyMusicFragment
 import com.ddona.music_download_ms3_tunk.user_case.UseCases
 import com.example.newsapp.adapter.diffutil.SongDiffCallback
@@ -33,7 +25,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 

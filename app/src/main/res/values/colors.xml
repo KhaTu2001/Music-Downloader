@@ -16,6 +16,8 @@
     <color name="thresSong">#FF1C1C</color>
     <color name="create_playlist_btn">#FE9B7A</color>
     <color name="gray">#7D7D7D</color>
+    <color name="background_downloading">#2B2B2B</color>
+    <color name="background_setting">#191750</color>
     <color name="background_nowplaying">#1D1D1D</color>
 
 </resources>

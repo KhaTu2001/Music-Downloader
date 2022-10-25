@@ -9,7 +9,7 @@
         android:id="@+id/homeFragment"
         android:name="com.ddona.music_download_ms3_tunk.ui.fragment.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" >
+        tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_homeFragment_to_seeAllSongFragment"
             app:destination="@id/seeAllSongFragment" />
@@ -25,42 +25,49 @@
         <action
             android:id="@+id/action_homeFragment_to_downloadFragment"
             app:destination="@id/downloadFragment" />
+        <action
+            android:id="@+id/action_homeFragment_self"
+            app:destination="@id/homeFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/playlistFragment"
         android:name="com.ddona.music_download_ms3_tunk.ui.fragment.PlaylistFragment"
         android:label="fragment_playlist"
-        tools:layout="@layout/fragment_playlist" >
+        tools:layout="@layout/fragment_playlist">
 
 
         <action
             android:id="@+id/action_playlistFragment_to_favouriteFragment"
             app:destination="@id/favouriteFragment" />
+        <action
+            android:id="@+id/action_playlistFragment_to_playlistDetailsFragment"
+            app:destination="@id/playlistDetailsFragment" />
+        <action
+            android:id="@+id/action_playlistFragment_to_playlistDetailsTemporaryFragment"
+            app:destination="@id/playlistDetailsTemporaryFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/settingFragment"
         android:name="com.ddona.music_download_ms3_tunk.ui.fragment.SettingFragment"
         android:label="fragment_setting"
-        tools:layout="@layout/fragment_setting" >
-    </fragment>
+        tools:layout="@layout/fragment_setting" />
 
     <fragment
         android:id="@+id/downloadFragment"
         android:name="com.ddona.music_download_ms3_tunk.ui.fragment.DownloadFragment"
         android:label="fragment_download"
-        tools:layout="@layout/fragment_download" >
-    </fragment>
+        tools:layout="@layout/fragment_download" />
 
     <fragment
         android:id="@+id/seeAllSongFragment"
         android:name="com.ddona.music_download_ms3_tunk.ui.fragment.SeeAllSongFragment"
         android:label="fragment_see_all_song"
-        tools:layout="@layout/fragment_see_all_song" >
+        tools:layout="@layout/fragment_see_all_song">
         <argument
             android:name="data"
-            app:argType="integer"/>
+            app:argType="integer" />
         <action
             android:id="@+id/action_seeAllSongFragment_to_seeAllSongByGenreFragment"
             app:destination="@id/seeAllSongByGenreFragment" />
@@ -69,16 +76,13 @@
         android:id="@+id/seeAllSongByGenreFragment"
         android:name="com.ddona.music_download_ms3_tunk.ui.fragment.SeeAllSongByGenreFragment"
         android:label="fragment_see_all_song_by_genre"
-        tools:layout="@layout/fragment_see_all_song_by_genre" >
+        tools:layout="@layout/fragment_see_all_song_by_genre">
         <argument
             android:name="keysearch"
-            app:argType="string"/>
+            app:argType="string" />
         <argument
             android:name="nameGenre"
-            app:argType="string"/>
-        <action
-            android:id="@+id/action_seeAllSongByGenreFragment_to_seeAllSongFragment"
-            app:destination="@id/seeAllSongFragment" />
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/favouriteFragment"
@@ -88,7 +92,7 @@
         android:id="@+id/myMusicFragment"
         android:name="com.ddona.music_download_ms3_tunk.ui.fragment.MyMusicFragment"
         android:label="fragment_my_music"
-        tools:layout="@layout/fragment_my_music" >
+        tools:layout="@layout/fragment_my_music">
         <action
             android:id="@+id/action_myMusicFragment_to_favouriteFragment"
             app:destination="@id/favouriteFragment" />
@@ -97,7 +101,7 @@
     <fragment
         android:id="@+id/searchFragment"
         android:name="com.ddona.music_download_ms3_tunk.fr.SearchFragment"
-        android:label="SearchFragment" >
+        android:label="SearchFragment">
         <action
             android:id="@+id/action_searchFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
@@ -106,10 +110,62 @@
         android:id="@+id/changeRegionFragment"
         android:name="com.ddona.music_download_ms3_tunk.ui.fragment.ChangeRegionFragment"
         android:label="fragment_change_region"
-        tools:layout="@layout/fragment_change_region" >
+        tools:layout="@layout/fragment_change_region">
         <action
             android:id="@+id/action_changeRegionFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/playlistDetailsFragment"
+        android:name="com.ddona.music_download_ms3_tunk.ui.fragment.PlaylistDetailsFragment"
+        android:label="PlaylistDetailsFragment">
+        <action
+            android:id="@+id/action_playlistDetailsFragment_to_selectionFragment"
+            app:destination="@id/selectionFragment" />
+        <argument
+            android:name="currentPlaylist"
+            app:argType="integer" />
+
+        <argument
+            android:name="playlistName"
+            app:argType="string" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/selectionFragment"
+        android:name="com.ddona.music_download_ms3_tunk.ui.fragment.SelectionFragment"
+        android:label="SelectionFragment" >
+        <argument
+            android:name="currentPlaylist"
+            app:argType="integer" />
+        <argument
+            android:name="from"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_selectionFragment_to_playlistDetailsFragment"
+            app:destination="@id/playlistDetailsFragment" />
+        <action
+            android:id="@+id/action_selectionFragment_to_playlistFragment"
+            app:destination="@id/playlistFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/playlistDetailsTemporaryFragment"
+        android:name="com.ddona.music_download_ms3_tunk.ui.fragment.PlaylistDetailsTemporaryFragment"
+        android:label="fragment_playlist_details_temporary"
+        tools:layout="@layout/fragment_playlist_details_temporary" >
+
+<!--        <argument-->
+<!--            android:name="currentPlaylist"-->
+<!--            app:argType="integer" />-->
+
+<!--        <argument-->
+<!--            android:name="playlistName"-->
+<!--            app:argType="string" />-->
+
+        <action
+            android:id="@+id/action_playlistDetailsTemporaryFragment_to_selectionFragment"
+            app:destination="@id/selectionFragment" />
+
     </fragment>
 
 

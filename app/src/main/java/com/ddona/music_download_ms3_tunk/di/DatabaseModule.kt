@@ -52,7 +52,8 @@ class DatabaseModule {
             deleteMusicFromPlaylistUserCase = deleteMusicFromPlaylistUserCase(repo),
             deleteMusicUserCase = deleteMusicUserCase(repo),
             deletePlaylistUserCase = deletePlaylistUserCase(repo),
-            checkName = CheckName(repo)
+            checkName = CheckName(repo),
+            checkSongID = CheckSongID(repo)
             )
     }
 }

@@ -1,82 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="172dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_marginBottom="80dp"
-    android:background="@color/background">
+    android:background="@color/background"
+    app:cardCornerRadius="16dp">
 
-    <LinearLayout
-        android:id="@+id/ln1"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="@drawable/border_dialog">
+        android:background="@color/background">
 
-        <TextView
-            android:id="@+id/txt_playlist_tittle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Name Playlist"
-            android:textColor="@color/white"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="16dp"
-            android:textSize="14dp"
-            android:textStyle="bold"/>
-
-
-        <TextView
-            android:id="@+id/txt_delete_playlist"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Do You Want To Remove Playlist?"
-            android:textColor="@color/white"
-            android:layout_gravity="center_horizontal"
-            android:textSize="14dp"
-            android:alpha="0.7"
-            android:layout_margin="30dp"
-           />
-
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
+            android:id="@+id/ln1"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
-            android:layout_marginEnd="30dp"
-            android:paddingBottom="16dp"
-            android:layout_gravity="center_horizontal">
+            android:layout_height="match_parent"
+            android:background="@drawable/border_dialog"
+            android:orientation="vertical">
 
             <TextView
-                android:id="@+id/accept_action_btn"
+                android:id="@+id/txt_playlist_tittle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="DELETE"
-                android:textColor="@color/create_playlist_btn"
-                android:textSize="14dp"
-                android:fontFamily="@font/inter_semibold"
-                app:layout_constraintEnd_toStartOf="@id/cancel_action_btn"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-               />
-
-            <TextView
-                android:id="@+id/cancel_action_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="CANCEL"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:text="Name Playlist"
                 android:textColor="@color/white"
-                android:alpha="0.5"
                 android:textSize="14dp"
-                android:fontFamily="@font/inter_semibold"
-                app:layout_constraintStart_toEndOf="@+id/accept_action_btn"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                android:textStyle="bold" />
 
 
+            <TextView
+                android:id="@+id/txt_delete_playlist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="30dp"
+                android:alpha="0.7"
+                android:gravity="center_horizontal"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:text="Do You Want To Remove Playlist?"
+                android:textColor="@color/white"
+                android:textSize="14dp" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </LinearLayout>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:paddingBottom="16dp">
+
+                <TextView
+                    android:id="@+id/accept_action_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/inter_semibold"
+                    android:text="DELETE"
+                    android:textColor="@color/create_playlist_btn"
+                    android:textSize="14dp"
+                    app:layout_constraintEnd_toStartOf="@id/cancel_action_btn"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/cancel_action_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:alpha="0.5"
+                    android:fontFamily="@font/inter_semibold"
+                    android:text="CANCEL"
+                    android:textColor="@color/white"
+                    android:textSize="14dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/accept_action_btn"
+                    app:layout_constraintTop_toTopOf="parent" />
 
 
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

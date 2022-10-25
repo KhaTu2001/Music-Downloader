@@ -33,7 +33,7 @@
         android:id="@+id/nowPlaying"
         android:name="com.ddona.music_download_ms3_tunk.ui.fragment.NowPlaying"
         android:layout_width="match_parent"
-        android:layout_height="71dp"
+        android:layout_height="wrap_content"
         android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@+id/nav_host_fragment"
         app:layout_constraintBottom_toTopOf="@id/bottom_nav"
@@ -42,7 +42,7 @@
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_nav"
         android:layout_width="match_parent"
-        android:layout_height="72dp"
+        android:layout_height="70dp"
         android:background="@color/background"
         app:itemIconTint="@drawable/bottom_navigation_selector"
         app:labelVisibilityMode="unlabeled"

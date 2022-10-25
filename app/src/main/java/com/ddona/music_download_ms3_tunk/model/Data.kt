@@ -9,22 +9,20 @@ import java.io.Serializable
 @Entity(tableName = "music", primaryKeys = ["id","playlist_id"])
 data class Data(
     val id: String,
-    val playlist_id:Int = -1,
+    var playlist_id:Int = -1,
     val albumName: String,
     val artistId: String,
     val artistName: String,
     val audio: String,
-    val audioDownload: String,
     val duration: Long,
     val albumId: String,
     val image: String,
     val name: String,
 
-) : Parcelable {
+    ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString().toString(),
         parcel.readInt(),
-        parcel.readString().toString(),
         parcel.readString().toString(),
         parcel.readString().toString(),
         parcel.readString().toString(),
@@ -43,7 +41,6 @@ data class Data(
         parcel.writeString(artistId)
         parcel.writeString(artistName)
         parcel.writeString(audio)
-        parcel.writeString(audioDownload)
         parcel.writeLong(duration)
         parcel.writeString(albumId)
         parcel.writeString(image)

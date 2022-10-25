@@ -27,8 +27,12 @@ class MusicRepositoryImpl @Inject constructor(
         return musicDAO.getCount(playlist_id)
     }
 
-    override suspend fun checkName(playlist_name: String): Flow<Int> {
+    override fun checkName(playlist_name: String): Flow<Int> {
         return musicDAO.checkName(playlist_name)
+    }
+
+    override fun checkSongID(playlistID: Int, id: String): Flow<Int> {
+        return musicDAO.checkSongName(playlistID,id)
     }
 
     override suspend fun addMusicToPlaylist(data: Data) {
