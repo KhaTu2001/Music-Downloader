@@ -2,6 +2,7 @@ package com.ddona.music_download_ms3_tunk.adapter
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -45,9 +46,11 @@ class FavouriteAdapter(
             val intent = Intent(context, PlayerActivity::class.java)
             intent.putExtra("index", position)
             intent.putExtra("from", "FavouriteAdapter")
+            intent.putExtra("FSongMusic",musicList)
             ContextCompat.startActivity(context, intent, null)
             //when play next music is clicked
         }
+
     }
 
     override fun getItemCount(): Int {

@@ -53,7 +53,10 @@ class DatabaseModule {
             deleteMusicUserCase = deleteMusicUserCase(repo),
             deletePlaylistUserCase = deletePlaylistUserCase(repo),
             checkName = CheckName(repo),
-            checkSongID = CheckSongID(repo)
+            checkSongID = CheckSongID(repo),
+            addMusicToDownloadlistUserCase = addMusicToDownloadlistUserCase(repo),
+            checkID = CheckID(repo),
+            deleteMusicDownloadedUserCase = deleteMusicDownloadedUserCase(repo)
             )
     }
 }

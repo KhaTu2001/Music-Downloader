@@ -6,9 +6,10 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.ddona.music_download_ms3_tunk.model.Data
 import com.ddona.music_download_ms3_tunk.model.playlistMusic
+import com.ddona.music_download_ms3_tunk.model.songDownloaded
 
 @Database(
-    entities = [Data::class,playlistMusic::class],
+    entities = [Data::class,playlistMusic::class,songDownloaded::class],
     exportSchema = false,
     version = 1
 )

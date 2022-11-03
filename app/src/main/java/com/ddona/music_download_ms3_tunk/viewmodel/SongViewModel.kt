@@ -1,11 +1,13 @@
 package com.ddona.music_download_ms3_tunk.viewmodel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.*
 import com.ddona.music_download_ms3_tunk.api.SongApi
 import com.ddona.music_download_ms3_tunk.callback.ConnectivityObserver
 import com.ddona.music_download_ms3_tunk.db.MusicDAO
 import com.ddona.music_download_ms3_tunk.model.*
+import com.ddona.music_download_ms3_tunk.ui.activity.MainActivity
 import com.ddona.music_download_ms3_tunk.ui.fragment.ChangeRegionFragment
 import com.ddona.music_download_ms3_tunk.utils.NetworkConnectivityObserver
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,33 +31,38 @@ class SongViewModel @Inject constructor(
     var listSongByGenre = MutableLiveData<List<Data>>()
     var searchList = MutableLiveData<List<Data>>()
     var playlistmusicList = MutableLiveData<List<playlistMusic>>()
+    var playlistmusicListOnl = MutableLiveData<List<playlistMusic>>()
+    var playlistmusicListOff = MutableLiveData<List<playlistMusic>>()
+
 
     private var connectivityObserver: ConnectivityObserver
 
     val isConnected = MutableLiveData(true)
 
     init {
-        viewModelScope.launch(Dispatchers.Main) {
-            getAllPlaylistList()
-        }
-        connectivityObserver = NetworkConnectivityObserver(application.applicationContext)
-        connectivityObserver.observe().onEach {
-            if (it == ConnectivityObserver.Status.Available){
-                viewModelScope.launch(Dispatchers.IO) {
-                        getAllTopListend()
-                        getAllGenres()
-                        getAllTopDownLoad()
-                        getAllTopTrending()
-                        getAllPlaylistList()
 
+        connectivityObserver = NetworkConnectivityObserver(application.applicationContext)
+
+        viewModelScope.launch(Dispatchers.Main){
+            getAllPlaylistList()
+
+        }
+        connectivityObserver.observe().onEach {
+            if (it == ConnectivityObserver.Status.Available) {
+                viewModelScope.launch(Dispatchers.IO) {
+                    getAllTopListend()
+                    getAllGenres()
+                    getAllTopDownLoad()
+                    getAllTopTrending()
+                    getAllPlaylistListOnl(0)
                 }
 
                 isConnected.postValue(true)
-            }
-            else{
+            } else {
                 isConnected.postValue(false)
             }
-
+            getAllPlaylistListOff(1)
+            getAllPlaylistList()
 
 
 
@@ -101,15 +108,33 @@ class SongViewModel @Inject constructor(
     fun getAllMusicByPlaylist(playlist_id: Int): Flow<List<Data>> = musicDAO.getSongBYPlaylist(playlist_id)
 
 
-    fun getAllPlaylist(): Flow<List<playlistMusic>> = musicDAO.getAllPlaylist()
+    fun getAllPlaylistOnl(status: Int): Flow<List<playlistMusic>> = musicDAO.getAllPlaylist(status)
+    fun getAllPlaylistOff(status: Int): Flow<List<playlistMusic>> = musicDAO.getAllPlaylist(status)
 
 
-    suspend fun getAllPlaylistList(){
-         musicDAO.getAllPlaylist().collect{
-             playlistmusicList.postValue(it)
+    suspend fun getAllPlaylistListOnl(status: Int) {
+        musicDAO.getAllPlaylist(status).collect {
+            playlistmusicListOnl.postValue(it)
 
         }
     }
+
+    suspend fun getAllPlaylistListOff(status: Int) {
+        musicDAO.getAllPlaylist(status).collect {
+            playlistmusicListOff.postValue(it)
+
+        }
+    }
+
+    suspend fun getAllPlaylistList() {
+        musicDAO.getAllPlaylistNoStatus().collect {
+            playlistmusicList.postValue(it)
+            Log.d("sgsad", "sadsadfsd:$it ")
+
+        }
+    }
+
+
 
 
 }

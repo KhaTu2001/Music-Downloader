@@ -4,8 +4,8 @@ import android.os.Parcel
 import android.os.Parcelable
 import androidx.room.Entity
 
-@Entity(tableName = "music", primaryKeys = ["id","playlist_id"])
-data class Data(
+@Entity(tableName = "songDownloaded", primaryKeys = ["id","playlist_id"])
+data class songDownloaded(
     val id: String,
     var playlist_id:Int = -1,
     val albumName: String,
@@ -16,8 +16,7 @@ data class Data(
     val albumId: String,
     val image: String,
     val name: String,
-    val audioDownload: String?,
-    val status: Int = 0
+    val status: Int = 1
 
 
     ) : Parcelable {
@@ -29,7 +28,6 @@ data class Data(
         parcel.readString().toString(),
         parcel.readString().toString(),
         parcel.readLong(),
-        parcel.readString().toString(),
         parcel.readString().toString(),
         parcel.readString().toString(),
         parcel.readString().toString(),
@@ -49,7 +47,6 @@ data class Data(
         parcel.writeString(albumId)
         parcel.writeString(image)
         parcel.writeString(name)
-        parcel.writeString(audioDownload)
         parcel.writeInt(status)
 
     }
@@ -58,12 +55,12 @@ data class Data(
         return 0
     }
 
-    companion object CREATOR : Parcelable.Creator<Data> {
-        override fun createFromParcel(parcel: Parcel): Data {
-            return Data(parcel)
+    companion object CREATOR : Parcelable.Creator<songDownloaded> {
+        override fun createFromParcel(parcel: Parcel): songDownloaded {
+            return songDownloaded(parcel)
         }
 
-        override fun newArray(size: Int): Array<Data?> {
+        override fun newArray(size: Int): Array<songDownloaded?> {
             return arrayOfNulls(size)
         }
     }

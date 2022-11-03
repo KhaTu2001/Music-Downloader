@@ -4,6 +4,8 @@ plugins {
     id 'kotlin-kapt'
     id 'androidx.navigation.safeargs'
     id 'dagger.hilt.android.plugin'
+
+
 }
 
 android {
@@ -53,6 +55,7 @@ dependencies {
     // Room
     implementation "androidx.room:room-runtime:2.4.2"
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.test:core-ktx:1.4.0'
     kapt "androidx.room:room-compiler:2.4.2"
 
     // Kotlin Extensions and Coroutines support for Room
@@ -122,6 +125,21 @@ dependencies {
     //Circleimageview
     implementation 'de.hdodenhof:circleimageview:3.1.0'
 
+
+    //Downloader
+    implementation 'com.ixuea:android-downloader:3.0.0'
+    implementation 'org.greenrobot:eventbus:3.2.0'
+
+    //ormlite
+    implementation 'com.j256.ormlite:ormlite-android:5.5'
+    implementation 'com.j256.ormlite:ormlite-core:5.5'
+
+// fetch2
+    implementation "androidx.tonyodev.fetch2:xfetch2:3.1.6"
+    implementation "androidx.tonyodev.fetch2rx:xfetch2rx:3.1.6"
+    implementation "androidx.tonyodev.fetch2okhttp:xfetch2okhttp:3.1.6"
+    implementation "androidx.tonyodev.fetch2fileserver:xfetch2fileserver:3.1.6"
+    implementation "androidx.tonyodev.fetchmigrator:xfetchmigrator:3.1.6"
 
 
     testImplementation 'junit:junit:4.13.2'

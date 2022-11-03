@@ -1,23 +1,26 @@
 package com.ddona.music_download_ms3_tunk.utils
 
-import android.Manifest
 import android.app.DownloadManager
 import android.content.Context
-import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.os.Environment
 import android.widget.Toast
 import com.ddona.music_download_ms3_tunk.ui.activity.MainActivity
+import com.ixuea.android.downloader.domain.DownloadInfo
 
+
+private var downloadInfo: DownloadInfo? = null
 
 fun startDownloadSong(url:String,context: Context){
 
+
+
+
     if(MainActivity.permssion == 1)
     try {
-        var downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+        val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
         val linkUrl = Uri.parse(url)
-        var request = DownloadManager.Request(linkUrl)
+        val request = DownloadManager.Request(linkUrl)
         request
             .setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE or DownloadManager.Request.NETWORK_WIFI)
             .setMimeType("application/mp3")

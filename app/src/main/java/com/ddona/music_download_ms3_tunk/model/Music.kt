@@ -4,10 +4,10 @@ import com.ddona.music_download_ms3_tunk.R
 import com.ddona.music_download_ms3_tunk.ui.activity.PlayerActivity
 import com.ddona.music_download_ms3_tunk.ui.activity.PlayerActivity.Companion.musicService
 import com.ddona.music_download_ms3_tunk.ui.activity.PlayerActivity.Companion.repeatOneSong
-import com.ddona.music_download_ms3_tunk.ui.fragment.NowPlaying
-import com.example.newsapp.fragments.FavouriteFragment
+import com.ddona.music_download_ms3_tunk.ui.fragment.FavouriteFragment
 import java.io.File
 import java.util.concurrent.TimeUnit
+import kotlin.math.roundToInt
 import kotlin.system.exitProcess
 
 
@@ -77,12 +77,6 @@ fun shufferPosition(isShuffer:Boolean){
 
 }
 
-fun pauseMusic() {
-    PlayerActivity.isPlaying = false
-    musicService!!.mediaPlayer!!.pause()
-    NowPlaying.binding.PlaypauseBtnNP.setImageResource(R.drawable.ic_play_song_icon)
-    musicService!!.showNotification(R.drawable.ic_play_song_icon)
-}
 
 fun favouriteChecker(id: String): Int {
     PlayerActivity.isFavourite = false
@@ -104,14 +98,6 @@ fun favouriteCheckerID(id: String): Int {
     return -1
 }
 
-fun checkPlaylist(playlist: ArrayList<Data>): ArrayList<Data>{
-    playlist.forEachIndexed { index, music ->
-        val file = File(music.audio)
-        if(!file.exists())
-            playlist.removeAt(index)
-    }
-    return playlist
-}
 
 fun exitApplication() {
     if (musicService != null) {
@@ -121,5 +107,17 @@ fun exitApplication() {
         musicService = null
     }
     exitProcess(1)
+}
+
+fun formatFileSize(size: Double):String {
+    if(size.isNaN()){
+     return "100"
+    }
+    else{
+        val newSize = size.roundToInt()
+        return newSize.toString()
+    }
+
+
 }
 

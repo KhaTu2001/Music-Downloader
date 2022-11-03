@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.ddona.music_download_ms3_tunk.model.Data
 import com.ddona.music_download_ms3_tunk.model.playlistMusic
+import com.ddona.music_download_ms3_tunk.model.songDownloaded
 import kotlinx.coroutines.flow.Flow
 
 
@@ -15,14 +16,23 @@ interface MusicDAO {
     @Query("SELECT * FROM music where playlist_id  = :playlistId")
      fun getSongBYPlaylist(playlistId : Int): Flow<List<Data>>
 
-    @Query("SELECT * FROM playlistMusic")
-    fun getAllPlaylist(): Flow<List<playlistMusic>>
+    @Query("SELECT * FROM playlistMusic where status = :status")
+    fun getAllPlaylist(status:Int): Flow<List<playlistMusic>>
 
-    @Query("SELECT * FROM playlistMusic Where playlistName LIKE '%' || :playlistName || '%' ")
-    fun getAllPlaylistByName(playlistName:String): Flow<List<playlistMusic>>
+    @Query("SELECT * FROM playlistMusic")
+    fun getAllPlaylistNoStatus(): Flow<List<playlistMusic>>
+
+    @Query("SELECT * FROM playlistMusic Where playlistName LIKE '%' || :playlistName || '%' and status = :status")
+    fun getAllPlaylistByName(playlistName:String,status: Int): Flow<List<playlistMusic>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addSongtoPlaylist(data: Data)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun addSongtoDownloadlist(songDownloaded: songDownloaded )
+
+    @Query("SELECT COUNT(id) FROM songDownloaded where id = :id")
+    fun checkid(id : String): Flow<Int>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addPlaylist(playlistMusic: playlistMusic)
@@ -47,5 +57,8 @@ interface MusicDAO {
 
     @Query("DELETE FROM music where playlist_id = :playlistId")
     fun deleteMusicSong(playlistId: Int)
+
+    @Query("DELETE FROM songDownloaded where id = :id")
+    fun deleteMusicDonwloaded(id: String)
 
 }

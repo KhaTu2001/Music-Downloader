@@ -23,11 +23,13 @@ import com.ddona.music_download_ms3_tunk.databinding.ItemTopListenedBinding
 import com.ddona.music_download_ms3_tunk.model.Data
 import com.ddona.music_download_ms3_tunk.model.favouriteCheckerID
 import com.ddona.music_download_ms3_tunk.model.playlistMusic
+import com.ddona.music_download_ms3_tunk.model.songDownloaded
 import com.ddona.music_download_ms3_tunk.ui.activity.MainActivity
+import com.ddona.music_download_ms3_tunk.ui.fragment.DownloandingFragment
+import com.ddona.music_download_ms3_tunk.ui.fragment.FavouriteFragment
 import com.ddona.music_download_ms3_tunk.user_case.UseCases
 import com.ddona.music_download_ms3_tunk.utils.startDownloadSong
 import com.example.newsapp.adapter.diffutil.SongDiffCallback
-import com.example.newsapp.fragments.FavouriteFragment
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.*
@@ -53,7 +55,7 @@ class TopListAdapter(
         adapter = PlaylistAdapter(context, userCases, true, this, null)
 
         CoroutineScope(Dispatchers.IO).launch {
-            userCases.getAllPlaylist().collect {
+            userCases.getAllPlaylist(0).collect {
                 withContext(Dispatchers.Main) {
                     adapter.submitList(it)
                 }
@@ -131,6 +133,7 @@ class TopListAdapter(
         val addPlaylist = bottomSheet.findViewById<View>(R.id.ln_add_to_playlist)
         val addFavorite = bottomSheet.findViewById<View>(R.id.ln_add_to_favorite)
         val addDownload = bottomSheet.findViewById<View>(R.id.ln_add_to_download)
+        val deleteSong = bottomSheet.findViewById<View>(R.id.ln_remove_download)
         val addShareSong = bottomSheet.findViewById<View>(R.id.ln_share_song)
 
 
@@ -143,7 +146,7 @@ class TopListAdapter(
             shareIntent.putExtra(Intent.EXTRA_TEXT, data.audio)
             startActivity(context, Intent.createChooser(shareIntent, "Sharing Music File!!"), null)
         }
-        
+
         addPlaylist?.setOnClickListener()
 
         {
@@ -160,13 +163,14 @@ class TopListAdapter(
                     editable?.let {
                         if (editable.toString().isNotEmpty()) {
                             CoroutineScope(Dispatchers.IO).launch {
-                                userCases.getAllPlaylistByName.invoke(editable.toString()).collect {
-                                    adapter.submitList(it)
-                                }
+                                userCases.getAllPlaylistByName.invoke(editable.toString(), 0)
+                                    .collect {
+                                        adapter.submitList(it)
+                                    }
                             }
                         } else {
                             CoroutineScope(Dispatchers.IO).launch {
-                                userCases.getAllPlaylist().collect {
+                                userCases.getAllPlaylist(0).collect {
                                     adapter.submitList(it)
                                 }
                             }
@@ -213,17 +217,27 @@ class TopListAdapter(
             FavouriteFragment.favouritesChanged = true
             bottomSheet.dismiss()
         }
+
         addDownload?.setOnClickListener()
         {
-            if(MainActivity.permssion == 1){
-                startDownloadSong(data.audio,context)
+            DownloandingFragment.musicList.add(data)
+            Toast.makeText(context, "Is Downloading", Toast.LENGTH_LONG).show()
+            bottomSheet.dismiss()
+        }
+
+        CoroutineScope(Dispatchers.Main).launch {
+            userCases.checkID.invoke(data.id).collect {
+                if (it > 0) {
+                    addDownload?.visibility = View.GONE
+                    deleteSong?.visibility = View.VISIBLE
+                }
             }
+        }
 
-            else{
-
-                Toast.makeText(context,"Permission Denied",Toast.LENGTH_LONG).show()
+        deleteSong?.setOnClickListener {
+            CoroutineScope(Dispatchers.IO).launch {
+                userCases.deleteMusicDownloadedUserCase.invoke(music2.id)
             }
-
             bottomSheet.dismiss()
         }
 
@@ -265,19 +279,19 @@ class TopListAdapter(
 
     fun addPlaylist(name: String, context: Context) {
         var playlistExists = false
-        for (i in MainActivity.playlistList) {
+        for (i in MainActivity.playlistListOnl) {
             if (name == i.playlistName) {
                 playlistExists = true
                 break
             }
         }
-        
+
 
         if (playlistExists) Toast.makeText(context, "Playlist Exist!!", Toast.LENGTH_SHORT).show()
         else {
 
             val tempPlaylist = playlistMusic(
-                playlistName = name, playList_ID = null
+                playlistName = name, playList_ID = null, status = 0
             )
 
             CoroutineScope(Dispatchers.IO).launch {
@@ -316,6 +330,8 @@ class TopListAdapter(
             image = music2.image,
             name = music2.name,
             playlist_id = index,
+            audioDownload = music2.audioDownload,
+            status = 0
         )
         CoroutineScope(Dispatchers.IO).launch {
 

@@ -3,14 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:backgroundTint="@color/background_downloading"
+
     app:cardCornerRadius="8dp">
 
     <LinearLayout
         android:id="@+id/linearLayout3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/background_downloading"
         android:gravity="center_vertical"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:orientation="horizontal">
 
         <androidx.cardview.widget.CardView
@@ -29,7 +33,7 @@
 
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="280dp"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
@@ -49,6 +53,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="14dp"
+
                 android:layout_marginTop="4dp"
                 android:alpha="0.7"
                 android:fontFamily="@font/inter_semibold"
@@ -60,22 +65,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
+                android:layout_marginLeft="15dp"
                 android:orientation="horizontal">
 
-                <SeekBar
-                    android:id="@+id/seekBar"
-                    android:layout_width="220dp"
-                    android:layout_height="3dp"
+                <ProgressBar
+                    android:id="@+id/progress_download"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    android:layout_width="200dp"
+                    android:layout_height="4dp"
                     android:layout_gravity="center_vertical"
-                    android:background="@color/background_downloading"
-                    android:backgroundTint="@color/gray"
                     android:progress="20"
-                    android:progressBackgroundTintMode="screen"
-                    android:progressDrawable="@drawable/custorm_seekbar"
+                    android:background="@color/gray"
+                    android:backgroundTint="@color/gray"
                     android:progressTint="@color/colorPrimary"
-                    android:theme="@style/tallerBarStyle"
-                    android:thumb="@drawable/custom_thumb"
-                    app:layout_constraintEnd_toEndOf="parent" />
+                    android:max="100" />
 
                 <TextView
                     android:id="@+id/progress_curren"

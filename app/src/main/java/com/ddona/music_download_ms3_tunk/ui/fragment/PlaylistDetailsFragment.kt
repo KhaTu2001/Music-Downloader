@@ -66,6 +66,7 @@ class PlaylistDetailsFragment : Fragment() {
         binding.playlistDetailsRV.setHasFixedSize(true)
         binding.playlistNamed.text = playlistName
         binding.playlistDetailsRV.layoutManager = LinearLayoutManager(requireContext())
+
         adapter = PlaylistDetailsAdapter(requireContext(), usercase, currentPlaylistPos)
         binding.playlistDetailsRV.adapter = adapter
 

@@ -61,7 +61,6 @@ class HomeFragment : Fragment(), ListenedSongItemClick, GenreItemClick, Trending
     ): View {
         binding = FragmentHomeBinding.inflate(inflater)
 
-
         viewModel.isConnected.observe(viewLifecycleOwner) {
             if (it == false) {
                 binding.shimmerViewContainer.visibility = View.VISIBLE

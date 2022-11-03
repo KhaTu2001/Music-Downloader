@@ -17,10 +17,10 @@ import com.ddona.music_download_ms3_tunk.databinding.ItemTopListenedBinding
 import com.ddona.music_download_ms3_tunk.model.Data
 import com.ddona.music_download_ms3_tunk.model.favouriteCheckerID
 import com.ddona.music_download_ms3_tunk.ui.activity.PlayerActivity
+import com.ddona.music_download_ms3_tunk.ui.fragment.FavouriteFragment
 import com.ddona.music_download_ms3_tunk.ui.fragment.MyMusicFragment
 import com.ddona.music_download_ms3_tunk.user_case.UseCases
 import com.example.newsapp.adapter.diffutil.SongDiffCallback
-import com.example.newsapp.fragments.FavouriteFragment
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.CoroutineScope
@@ -55,6 +55,7 @@ class PlaylistDetailsAdapter(
             binding.songNamed.text = data.name
             binding.songAuthor.text = data.artistName
             binding.lnIndex.visibility = View.GONE
+
             binding.root.setOnClickListener {
                 val intent = Intent(context, PlayerActivity::class.java)
                 intent.putExtra("index", adapterPosition)

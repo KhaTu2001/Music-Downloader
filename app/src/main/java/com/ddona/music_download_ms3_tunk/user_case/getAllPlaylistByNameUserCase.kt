@@ -6,9 +6,9 @@ import kotlinx.coroutines.flow.Flow
 
 class getAllPlaylistByNameUserCase(private val repo: MusicRepository) {
 
-    operator fun invoke(playlistName:String): Flow<List<playlistMusic>>
+    operator fun invoke(playlistName:String,status:Int): Flow<List<playlistMusic>>
     {
-        return repo.getAllPlaylistByName(playlistName)
+        return repo.getAllPlaylistByName(playlistName,status)
     }
 
 }

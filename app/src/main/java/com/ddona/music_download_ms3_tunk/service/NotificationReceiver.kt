@@ -11,6 +11,7 @@ import com.ddona.music_download_ms3_tunk.App
 import com.ddona.music_download_ms3_tunk.R
 import com.ddona.music_download_ms3_tunk.model.exitApplication
 import com.ddona.music_download_ms3_tunk.model.setSongPosition
+import com.ddona.music_download_ms3_tunk.ui.activity.MainActivity
 import com.ddona.music_download_ms3_tunk.ui.activity.PlayerActivity
 import com.ddona.music_download_ms3_tunk.ui.fragment.NowPlaying
 
@@ -22,13 +23,7 @@ class NotificationReceiver:BroadcastReceiver() {
             App.PLAY -> if(PlayerActivity.isPlaying) pauseMusic() else playMusic()
             App.NEXT -> prevNextSong(increment = true, context = context!!)
             App.EXIT ->{
-                if (PlayerActivity.musicService != null) {
-                    PlayerActivity.musicService!!.audioManager.abandonAudioFocus(PlayerActivity.musicService)
-                    PlayerActivity.musicService!!.stopForeground(true)
-                    PlayerActivity.musicService!!.mediaPlayer!!.stop()
-                    PlayerActivity.musicService = null
-                    NowPlaying.binding.root.visibility = View.GONE
-                }
+                if (PlayerActivity.musicService != null) exitApplication()
             }
         }
     }

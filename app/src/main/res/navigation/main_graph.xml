@@ -86,8 +86,12 @@
     </fragment>
     <fragment
         android:id="@+id/favouriteFragment"
-        android:name="com.example.newsapp.fragments.FavouriteFragment"
-        android:label="FavouriteFragment" />
+        android:name="com.ddona.music_download_ms3_tunk.ui.fragment.FavouriteFragment"
+        android:label="FavouriteFragment" >
+        <argument
+            android:name="status"
+            app:argType="integer" />
+    </fragment>
     <fragment
         android:id="@+id/myMusicFragment"
         android:name="com.ddona.music_download_ms3_tunk.ui.fragment.MyMusicFragment"

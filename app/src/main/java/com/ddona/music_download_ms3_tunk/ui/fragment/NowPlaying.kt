@@ -38,6 +38,7 @@ class NowPlaying : Fragment() {
         binding = FragmentNowPlayingBinding.bind(view)
         binding.root.visibility = View.INVISIBLE
         binding.PlaypauseBtnNP.setOnClickListener {
+
             if (PlayerActivity.isPlaying) pauseMusic() else playMusic()
         }
 
@@ -49,7 +50,6 @@ class NowPlaying : Fragment() {
                 musicService = null
                 binding.root.visibility = View.GONE
                 MainActivity.binding.nowPlaying.visibility = View.GONE
-//                seekBarSetup(null)
             }
         }
 
@@ -101,6 +101,7 @@ class NowPlaying : Fragment() {
 
             binding.songNamed.isSelected = true
             binding.authorName.isSelected = true
+
             Glide.with(requireContext())
                 .load(PlayerActivity.musicList[PlayerActivity.songPosition].image)
                 .apply(
@@ -108,6 +109,7 @@ class NowPlaying : Fragment() {
                         .centerCrop()
                 )
                 .into(binding.songImg)
+
             binding.songNamed.text = PlayerActivity.musicList[PlayerActivity.songPosition].name
             binding.authorName.text =
                 PlayerActivity.musicList[PlayerActivity.songPosition].artistName

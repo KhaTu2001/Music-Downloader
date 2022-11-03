@@ -8,4 +8,5 @@ data class playlistMusic(
     @PrimaryKey(autoGenerate = true)
     val playList_ID: Int? = null,
     val playlistName: String,
+    val status:Int = -1
 )

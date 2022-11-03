@@ -18,12 +18,11 @@ import com.ddona.music_download_ms3_tunk.adapter.PlaylistAdapter
 import com.ddona.music_download_ms3_tunk.callback.PlaylistListSongItemClick
 import com.ddona.music_download_ms3_tunk.databinding.CreateNewPlaylistDialogBinding
 import com.ddona.music_download_ms3_tunk.databinding.FragmentMyMusicBinding
-import com.ddona.music_download_ms3_tunk.databinding.FragmentPlaylistDetailsTemporaryBinding
+import com.ddona.music_download_ms3_tunk.model.Data
 import com.ddona.music_download_ms3_tunk.model.playlistMusic
 import com.ddona.music_download_ms3_tunk.ui.activity.MainActivity
 import com.ddona.music_download_ms3_tunk.user_case.UseCases
 import com.ddona.music_download_ms3_tunk.viewmodel.SongViewModel
-import com.example.newsapp.fragments.FavouriteFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
@@ -33,10 +32,9 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MyMusicFragment : Fragment(), PlaylistListSongItemClick {
     @Inject
-    lateinit var usercase: UseCases
+    lateinit var userCase: UseCases
 
     val viewModel: SongViewModel by activityViewModels()
-    private var listmusic: ArrayList<playlistMusic> = ArrayList()
 
     companion object {
         lateinit var binding: FragmentMyMusicBinding
@@ -50,29 +48,37 @@ class MyMusicFragment : Fragment(), PlaylistListSongItemClick {
         savedInstanceState: Bundle?
     ): View {
 
+        val favouriteStatusList: ArrayList<Data> = ArrayList()
+
+        for(i in FavouriteFragment.favouriteList){
+            if(i.status == 1){
+                favouriteStatusList.add(i)
+            }
+        }
+
         binding = FragmentMyMusicBinding.inflate(inflater)
-        binding.fvCountSong.text = FavouriteFragment.favouriteList.size.toString() + " Songs"
+        binding.fvCountSong.text = favouriteStatusList.size.toString() + " Songs"
 
         binding.rvPlaylist.setHasFixedSize(true)
 
-        adapter = PlaylistAdapter(requireContext(), usercase, false, null, this)
+        adapter = PlaylistAdapter(requireContext(), userCase, false, null, this)
 
         lifecycleScope.launch(Dispatchers.IO) {
-            viewModel.getAllPlaylist().collect {
+            viewModel.getAllPlaylistOff(1).collect {
                 withContext(Dispatchers.Main) {
                     adapter.submitList(it)
-
                     binding.shimmerViewContainer.stopShimmerAnimation()
                     binding.shimmerViewContainer.visibility = View.GONE
                     binding.rvPlaylist.visibility = View.VISIBLE
                 }
             }
         }
+
         binding.rvPlaylist.adapter = adapter
 
 
         binding.lnAddToFavorite.setOnClickListener {
-            val action = PlaylistFragmentDirections.actionPlaylistFragmentToFavouriteFragment()
+            val action = PlaylistFragmentDirections.actionPlaylistFragmentToFavouriteFragment(1)
             findNavController(binding.root).navigate(action)
         }
 
@@ -121,7 +127,7 @@ class MyMusicFragment : Fragment(), PlaylistListSongItemClick {
     private fun addPlaylist(name: String) {
 
         var playlistExists = false
-        for (i in MainActivity.playlistList) {
+        for (i in MainActivity.playlistListOff) {
             if (name == i.playlistName) {
                 playlistExists = true
                 break
@@ -133,12 +139,12 @@ class MyMusicFragment : Fragment(), PlaylistListSongItemClick {
         else {
 
             val tempPlaylist = playlistMusic(
-                playlistName = name, playList_ID = null
+                playlistName = name, playList_ID = null,status = 1
             )
 
 
             lifecycleScope.launch(Dispatchers.IO) {
-                usercase.addPlaylist.invoke(tempPlaylist)
+                userCase.addPlaylist.invoke(tempPlaylist)
             }
 
 
@@ -155,22 +161,6 @@ class MyMusicFragment : Fragment(), PlaylistListSongItemClick {
                 delay(1000)
                 dialogsuccess.dismiss()
             }
-
-//            lifecycleScope.launch(Dispatchers.Main) {
-//                viewModel.getAllPlaylist().collect {
-//                    listmusic.addAll(it)
-//                    val size: Int = listmusic.size - 1
-//                    val action = listmusic[size].playList_ID?.let { it1 ->
-//                        PlaylistFragmentDirections.actionPlaylistFragmentToPlaylistDetailsTemporaryFragment(
-//                            it1, listmusic[size].playlistName
-//                        )
-//                    }
-//                    action?.let {
-//                            it1 -> findNavController().navigate(it1)
-//                    }
-//
-//                }
-//            }
 
             MainActivity.binding.navHostFragment.findNavController().navigate(R.id.playlistDetailsTemporaryFragment)
 

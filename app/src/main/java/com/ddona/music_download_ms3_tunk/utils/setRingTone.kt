@@ -1,31 +1,38 @@
-//import android.content.ContentValues
-//import android.content.Context
-//import android.media.RingtoneManager
-//import android.provider.MediaStore
-//import com.ddona.music_download_ms3_tunk.model.Data
+//import android.content.res.AssetFileDescriptor
+//import android.net.Uri
+//import android.os.Environment
+//import android.util.Log
+//import java.io.*
 //
-//fun setRingTone(context: Context, data: Data) {
+//var path = Environment.getExternalStorageDirectory().toString() + "/customsounds"
 //
-//    val values = ContentValues()
-//    values.put(MediaStore.MediaColumns.DATA, data.audio.getAbsolutePath())
-//    values.put(MediaStore.MediaColumns.TITLE, "Sonify")
-//    values.put(MediaStore.MediaColumns.MIME_TYPE, "audio/mp3")
-//    values.put(MediaStore.Audio.Media.IS_RINGTONE, true)
-//    values.put(MediaStore.Audio.Media.IS_NOTIFICATION, false)
-//    values.put(MediaStore.Audio.Media.IS_ALARM, false)
-//    values.put(MediaStore.Audio.Media.IS_MUSIC, false)
-//
-//// Setting ringtone....
-//
-//// Setting ringtone....
-//    getContentResolver().delete(
-//        MediaStore.Audio.Media.INTERNAL_CONTENT_URI,
-//        MediaStore.Audio.Media.TITLE + " = \"Sonify\"",
+//fun getFile(): File? {
+//    val exists = File(path).exists()
+//    if (!exists) {
+//        File(path).mkdirs()
+//    }
+//    val newSoundFile = File(path, sound.getFileName().toString() + ".mp3")
+//    val mUri = Uri.parse("android.resource://com.example.customsounds/" + sound.getId())
+//    val mCr = contentResolver
+//    val soundFile: AssetFileDescriptor?
+//    soundFile = try {
+//        mCr.openAssetFileDescriptor(mUri, "r")
+//    } catch (e: FileNotFoundException) {
 //        null
-//    )
-//// To avoid duplicate inserts
-//// To avoid duplicate inserts
-//    val ringUri: Uri =
-//        getContentResolver().insert(MediaStore.Audio.Media.INTERNAL_CONTENT_URI, values)
-//    RingtoneManager.setActualDefaultRingtoneUri(this, RingtoneManager.TYPE_ALARM, ringUri)
+//    }
+//    try {
+//        val readData = ByteArray(1024)
+//        val fis: FileInputStream = soundFile!!.createInputStream()
+//        val fos = FileOutputStream(newSoundFile)
+//        var i: Int = fis.read(readData)
+//        while (i != -1) {
+//            fos.write(readData, 0, i)
+//            i = fis.read(readData)
+//        }
+//        fos.close()
+//    } catch (io: IOException) {
+//        Log.e("sfdsd", "io exception")
+//        return null
+//    }
+//    return newSoundFile
 //}

@@ -37,7 +37,7 @@
 
 
     <LinearLayout
-        android:id="@+id/ln_remove_download"
+        android:id="@+id/ln_remove_downloading"
         android:layout_width="match_parent"
         android:layout_height="57dp"
         android:orientation="horizontal"

@@ -12,6 +12,9 @@ data class UseCases(
     val deleteMusicUserCase: deleteMusicUserCase,
     val deletePlaylistUserCase: deletePlaylistUserCase,
     val checkName: CheckName,
-    val checkSongID: CheckSongID
+    val checkSongID: CheckSongID,
+    val addMusicToDownloadlistUserCase: addMusicToDownloadlistUserCase,
+    val checkID: CheckID,
+    val deleteMusicDownloadedUserCase: deleteMusicDownloadedUserCase
 
     )

@@ -12,7 +12,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.ddona.music_download_ms3_tunk.BuildConfig
 import com.ddona.music_download_ms3_tunk.databinding.FragmentSettingBinding
-import com.ddona.music_download_ms3_tunk.ui.activity.PlayerActivity
+import com.ixuea.android.downloader.callback.DownloadManager
 
 
 class SettingFragment : Fragment() {
@@ -34,9 +34,7 @@ class SettingFragment : Fragment() {
         }
 
         binding.lnFeedback.setOnClickListener {
-            val intent = Intent(Intent.ACTION_SEND)
-            intent.setType("message/rfc822")
-            intent.putExtra(Intent.EXTRA_EMAIL, arrayOf("tunk@proxglobal.com"))
+            val intent = Intent(Intent.ACTION_VIEW,Uri.parse("mailto:"+"tunk@proxglobal.com"))
             intent.putExtra(Intent.EXTRA_SUBJECT, "Feedback: MUSIC DOWNLOADER")
             startActivity(intent)
         }
@@ -52,7 +50,7 @@ class SettingFragment : Fragment() {
             shareIntent.type = "plain/text"
             shareIntent.putExtra(
                 Intent.EXTRA_TEXT,
-                "https://play.google.com/store/apps/details? =" + BuildConfig.APPLICATION_ID
+                "https://play.google.com/store/apps/details? = " + BuildConfig.APPLICATION_ID
             )
             startActivity(Intent.createChooser(shareIntent, "Sharing App Link!!"))
 

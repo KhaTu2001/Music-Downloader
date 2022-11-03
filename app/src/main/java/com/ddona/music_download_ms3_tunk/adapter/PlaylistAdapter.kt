@@ -14,7 +14,6 @@ import com.ddona.music_download_ms3_tunk.databinding.DeletePlaylistDialogBinding
 import com.ddona.music_download_ms3_tunk.databinding.ItemPlaylistBinding
 import com.ddona.music_download_ms3_tunk.databinding.RenamePlaylistDialogBinding
 import com.ddona.music_download_ms3_tunk.model.playlistMusic
-import com.ddona.music_download_ms3_tunk.ui.activity.PlayerActivity
 import com.ddona.music_download_ms3_tunk.user_case.UseCases
 import com.example.newsapp.adapter.diffutil.PlaylistDiffCallback
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -28,11 +27,10 @@ class PlaylistAdapter(
     private val useCases: UseCases,
     private val addMusic: Boolean = false,
     private val callback: ListSongItemClick?,
-    private val callback2: PlaylistListSongItemClick?
+    private val callback2: PlaylistListSongItemClick?,
 
 
-
-    ) : ListAdapter<playlistMusic, PlaylistAdapter.ViewHolder>(
+) : ListAdapter<playlistMusic, PlaylistAdapter.ViewHolder>(
     PlaylistDiffCallback()
 ) {
 
@@ -66,7 +64,7 @@ class PlaylistAdapter(
                 index?.let {
                     useCases.countRowSong(it).collect {
                         withContext(Dispatchers.Main) {
-                            binding.newCountSong.text = it.toString() + " Songs"
+                            binding.newCountSong.text = "$it Songs"
                         }
                     }
                 }
@@ -77,7 +75,7 @@ class PlaylistAdapter(
                 index?.let {
                     useCases.getAllMusicByPlaylist(it).collect {
                         withContext(Dispatchers.Main) {
-                            if (it.size > 0) {
+                            if (it.isNotEmpty()) {
                                 binding.playlistImgInactive.visibility = View.GONE
                                 binding.playlistImg.visibility = View.VISIBLE
                                 Glide.with(context)
@@ -92,7 +90,7 @@ class PlaylistAdapter(
 
 
 
-            if (addMusic == true) {
+            if (addMusic) {
                 binding.root.setOnClickListener {
                     index?.let { it1 -> callback?.ListSongOnClick(it1) }
 
@@ -163,7 +161,7 @@ class PlaylistAdapter(
             }
 
             dialog.show()
-            dialog.setCanceledOnTouchOutside(false);
+            dialog.setCanceledOnTouchOutside(false)
         }
 
         reMovePlayList?.setOnClickListener {
@@ -191,7 +189,7 @@ class PlaylistAdapter(
                 bottomSheet.dismiss()
                 Toast.makeText(context, "Remove playlist successfully!!", Toast.LENGTH_SHORT).show()
 
-
+                notifyDataSetChanged()
             }
 
             cancelBtn.setOnClickListener {
@@ -200,7 +198,8 @@ class PlaylistAdapter(
 
 
             dialog.show()
-            dialog.setCanceledOnTouchOutside(false);
+            dialog.setCanceledOnTouchOutside(false)
+
         }
 
 
