@@ -181,7 +181,7 @@ class MyMusicFragment : Fragment(), PlaylistListSongItemClick {
 
     override fun ListSongOnClick(index: Int, playlistName: String) {
         val action = PlaylistFragmentDirections.actionPlaylistFragmentToPlaylistDetailsFragment(
-            index, playlistName
+            index, playlistName,1
         )
         findNavController().navigate(action)
     }

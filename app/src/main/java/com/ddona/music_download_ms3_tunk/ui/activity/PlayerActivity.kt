@@ -19,6 +19,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -67,6 +68,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
 
         var fIndex: Int = -1
 
+        var checkFlag: Boolean = false
 
         var isClickNextPrev = false
         var musicService: MusicService? = null
@@ -80,6 +82,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPlayerBinding.inflate(layoutInflater)
+        checkFlag = true
 
         adapter = PlaylistAdapter(this, usercase, true, this, null)
 
@@ -143,7 +146,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         binding.shareSong.setOnClickListener {
             val shareIntent = Intent()
             shareIntent.action = Intent.ACTION_SEND
-            shareIntent.setType("text/plain")
+            shareIntent.type = "text/plain"
             shareIntent.putExtra(Intent.EXTRA_TEXT, musicList[songPosition].audio)
             startActivity(Intent.createChooser(shareIntent, "Sharing Music Link!!"))
         }
@@ -231,7 +234,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
             "SeeAllSong" -> initServiceAndPlaylist(SeeAllSongFragment.localListSong)
             "FavouriteAdapter" -> intent.getParcelableArrayListExtra<Data>("FSongMusic")
                 ?.let { initServiceAndPlaylist(it) }
-            "MusicAdapter" -> initServiceAndPlaylist(MainActivity.MusicListMA)
+            "MusicAdapter" -> initServiceAndPlaylist(DownloadedFragment.musicListMA)
             "SearchFragment" -> initServiceAndPlaylist(SearchFragment.searchListMA)
             "playlistDetails" -> intent.getParcelableArrayListExtra<Data>("dataMusic")
                 ?.let { initServiceAndPlaylist(it) }
@@ -242,21 +245,24 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
 
     private fun setLayout() {
 
-        fIndex = favouriteChecker(musicList[songPosition].id)
+
         Glide.with(applicationContext)
             .load(musicList[songPosition].image)
             .apply(
-                RequestOptions().placeholder(R.drawable.music_player_icon_slash_screen).centerCrop()
+                RequestOptions().placeholder(R.drawable.music_player_icon_slash_screen)
+                    .centerCrop()
             )
             .into(binding.songImg)
         Glide.with(applicationContext)
             .load(musicList[songPosition].image)
             .apply(
-                RequestOptions().placeholder(R.drawable.music_player_icon_slash_screen).centerCrop()
+                RequestOptions().placeholder(R.drawable.music_player_icon_slash_screen)
+                    .centerCrop()
             )
             .into(binding.backgroundSongImg)
         binding.songNamed.text = musicList[songPosition].name
         binding.authorName.text = musicList[songPosition].artistName
+
 
 
 
@@ -487,7 +493,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
     }
 
 
-    fun showBottomSheetDialog() {
+    private fun showBottomSheetDialog() {
         val bottomSheet: BottomSheetDialog = BottomSheetDialog(this)
         bottomSheet.setContentView(R.layout.add_option_dialog)
 
@@ -504,10 +510,10 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         {
             showAddToPlaylistBottomSheet()
         }
-        var txtAddFavorite = bottomSheet.findViewById<TextView>(R.id.txt_add_to_favorite)
+        val txtAddFavorite = bottomSheet.findViewById<TextView>(R.id.txt_add_to_favorite)
 
-        if (isFavourite) txtAddFavorite?.setText("Remove from Favorite")
-        else txtAddFavorite?.setText("Add to Favorite")
+        if (isFavourite) txtAddFavorite?.text = "Remove from Favorite"
+        else txtAddFavorite?.text = "Add to Favorite"
 
         addFavorite?.setOnClickListener()
         {
@@ -538,33 +544,23 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         }
         addDownload?.setOnClickListener()
         {
-            val music = songDownloaded(
-                id = musicList[songPosition].id,
-                albumId = musicList[songPosition].albumId,
-                albumName = musicList[songPosition].albumName,
-                artistId = musicList[songPosition].artistId,
-                audio = musicList[songPosition].audio,
-                artistName = musicList[songPosition].artistName,
-                duration = musicList[songPosition].duration,
-                image = musicList[songPosition].image,
-                name = musicList[songPosition].name,
-                playlist_id = -1,
-                status = 1
-            )
+
             DownloandingFragment.musicList.add(musicList[songPosition])
-            CoroutineScope(Dispatchers.IO).launch {
-                usercase.addMusicToDownloadlistUserCase.invoke(music)
-            }
+
+            finish()
+
+            MainActivity.binding.navHostFragment.findNavController().navigate(R.id.playlistFragment)
+
 
             Toast.makeText(this, "Is Downloading", Toast.LENGTH_LONG).show()
-
             bottomSheet.dismiss()
         }
 
         CoroutineScope(Dispatchers.Main).launch {
-            usercase.checkID.invoke(musicList[songPosition].id).collect{
-                if(it>0){
+            usercase.checkID.invoke(musicList[songPosition].id).collect {
+                if (it > 0) {
                     addDownload?.visibility = View.GONE
+
                 }
             }
         }
@@ -573,7 +569,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         bottomSheet.show()
     }
 
-    fun showAddToPlaylistBottomSheet() {
+    private fun showAddToPlaylistBottomSheet() {
 
         val createPLBtn = bottomSheet2.findViewById<View>(R.id.ln_create_playlist)
         val searchText =
@@ -595,7 +591,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
                                     }
                             }
                         } else {
-                            lifecycleScope.launch() {
+                            lifecycleScope.launch {
                                 usercase.getAllPlaylist(0).collect {
                                     adapter.submitList(it)
                                 }
@@ -617,7 +613,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
                                     }
                             }
                         } else {
-                            lifecycleScope.launch() {
+                            lifecycleScope.launch {
                                 usercase.getAllPlaylist(0).collect {
                                     adapter.submitList(it)
                                 }
@@ -638,7 +634,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
 
     }
 
-    fun customAlertDialog() {
+    private fun customAlertDialog() {
         val customDialog = LayoutInflater.from(this)
             .inflate(R.layout.create_new_playlist_dialog, binding.root, false)
         val binder = CreateNewPlaylistDialogBinding.bind(customDialog)
@@ -664,7 +660,7 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         }
 
         dialog.show()
-        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCanceledOnTouchOutside(false)
         dialog.window?.setGravity(Gravity.TOP)
 
     }
@@ -727,4 +723,6 @@ class PlayerActivity : AppCompatActivity(), ServiceConnection, MediaPlayer.OnCom
         }
         Toast.makeText(this, "Song Added successfully!!", Toast.LENGTH_SHORT).show()
     }
+
+
 }

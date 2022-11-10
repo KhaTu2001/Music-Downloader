@@ -1,9 +1,11 @@
 package com.ddona.music_download_ms3_tunk.model
 
+import android.util.Log
 import com.ddona.music_download_ms3_tunk.R
 import com.ddona.music_download_ms3_tunk.ui.activity.PlayerActivity
 import com.ddona.music_download_ms3_tunk.ui.activity.PlayerActivity.Companion.musicService
 import com.ddona.music_download_ms3_tunk.ui.activity.PlayerActivity.Companion.repeatOneSong
+import com.ddona.music_download_ms3_tunk.ui.fragment.DownloandingFragment
 import com.ddona.music_download_ms3_tunk.ui.fragment.FavouriteFragment
 import java.io.File
 import java.util.concurrent.TimeUnit
@@ -77,6 +79,13 @@ fun shufferPosition(isShuffer:Boolean){
 
 }
 
+fun comparePaths(path: String): Boolean {
+    for (i in DownloandingFragment.musicList)
+        if (path == "/storage/emulated/0/Music Downloader/"+i.name+".mp3") return true
+    Log.d("asdsad", "comparePaths: $path")
+    return false
+}
+
 
 fun favouriteChecker(id: String): Int {
     PlayerActivity.isFavourite = false
@@ -111,7 +120,7 @@ fun exitApplication() {
 
 fun formatFileSize(size: Double):String {
     if(size.isNaN()){
-     return "100"
+     return "0"
     }
     else{
         val newSize = size.roundToInt()

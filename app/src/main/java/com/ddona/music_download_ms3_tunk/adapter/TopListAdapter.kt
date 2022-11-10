@@ -12,6 +12,9 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat.startActivity
 import androidx.core.widget.addTextChangedListener
+import androidx.navigation.Navigation.findNavController
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -23,12 +26,9 @@ import com.ddona.music_download_ms3_tunk.databinding.ItemTopListenedBinding
 import com.ddona.music_download_ms3_tunk.model.Data
 import com.ddona.music_download_ms3_tunk.model.favouriteCheckerID
 import com.ddona.music_download_ms3_tunk.model.playlistMusic
-import com.ddona.music_download_ms3_tunk.model.songDownloaded
 import com.ddona.music_download_ms3_tunk.ui.activity.MainActivity
-import com.ddona.music_download_ms3_tunk.ui.fragment.DownloandingFragment
-import com.ddona.music_download_ms3_tunk.ui.fragment.FavouriteFragment
+import com.ddona.music_download_ms3_tunk.ui.fragment.*
 import com.ddona.music_download_ms3_tunk.user_case.UseCases
-import com.ddona.music_download_ms3_tunk.utils.startDownloadSong
 import com.example.newsapp.adapter.diffutil.SongDiffCallback
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -89,36 +89,38 @@ class TopListAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(data: Data) {
-            Glide.with(binding.songImg)
-                .load(data.image)
-                .into(binding.songImg)
-            binding.songNamed.text = data.name
-            binding.songAuthor.text = data.artistName
-            binding.itemsSong.setOnClickListener {
 
-                callback.ListOnClick(adapterPosition)
-            }
+                Glide.with(binding.songImg)
+                    .load(data.image)
+                    .into(binding.songImg)
+                binding.songNamed.text = data.name
+                binding.songAuthor.text = data.artistName
+                binding.itemsSong.setOnClickListener {
 
-            binding.songOption.setOnClickListener {
-                showBottomSheetDialogAdapter(data)
+                    callback.ListOnClick(adapterPosition)
+                }
+
+                binding.songOption.setOnClickListener {
+                    showBottomSheetDialogAdapter(data)
+
+                }
+                binding.numericalOrder.text = (adapterPosition + 1).toString() + "."
+
+                if (adapterPosition == 0) {
+                    binding.numericalOrder.setTextColor(Color.parseColor("#F89500"))
+                }
+                if (adapterPosition == 1) {
+                    binding.numericalOrder.setTextColor(Color.parseColor("#00FF57"))
+
+                }
+                if (adapterPosition == 2) {
+                    binding.numericalOrder.setTextColor(Color.parseColor("#FF1C1C"))
+                }
+                if (adapterPosition == 3 && seeAll) {
+                    binding.numericalOrder.setTextColor(Color.parseColor("#F500BF"))
+                }
 
 
-            }
-            binding.numericalOrder.text = (adapterPosition + 1).toString() + "."
-
-            if (adapterPosition == 0) {
-                binding.numericalOrder.setTextColor(Color.parseColor("#F89500"))
-            }
-            if (adapterPosition == 1) {
-                binding.numericalOrder.setTextColor(Color.parseColor("#00FF57"))
-
-            }
-            if (adapterPosition == 2) {
-                binding.numericalOrder.setTextColor(Color.parseColor("#FF1C1C"))
-            }
-            if (adapterPosition == 3 && seeAll) {
-                binding.numericalOrder.setTextColor(Color.parseColor("#F500BF"))
-            }
         }
     }
 
@@ -133,7 +135,6 @@ class TopListAdapter(
         val addPlaylist = bottomSheet.findViewById<View>(R.id.ln_add_to_playlist)
         val addFavorite = bottomSheet.findViewById<View>(R.id.ln_add_to_favorite)
         val addDownload = bottomSheet.findViewById<View>(R.id.ln_add_to_download)
-        val deleteSong = bottomSheet.findViewById<View>(R.id.ln_remove_download)
         val addShareSong = bottomSheet.findViewById<View>(R.id.ln_share_song)
 
 
@@ -218,9 +219,11 @@ class TopListAdapter(
             bottomSheet.dismiss()
         }
 
+
         addDownload?.setOnClickListener()
         {
             DownloandingFragment.musicList.add(data)
+
             Toast.makeText(context, "Is Downloading", Toast.LENGTH_LONG).show()
             bottomSheet.dismiss()
         }
@@ -229,17 +232,11 @@ class TopListAdapter(
             userCases.checkID.invoke(data.id).collect {
                 if (it > 0) {
                     addDownload?.visibility = View.GONE
-                    deleteSong?.visibility = View.VISIBLE
                 }
             }
         }
 
-        deleteSong?.setOnClickListener {
-            CoroutineScope(Dispatchers.IO).launch {
-                userCases.deleteMusicDownloadedUserCase.invoke(music2.id)
-            }
-            bottomSheet.dismiss()
-        }
+
 
         bottomSheet.show()
     }

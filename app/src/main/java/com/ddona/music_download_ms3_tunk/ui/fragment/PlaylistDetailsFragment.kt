@@ -42,6 +42,8 @@ class PlaylistDetailsFragment : Fragment() {
     val viewModel: SongViewModel by activityViewModels()
 
     var currentPlaylistPos: Int = -1
+    var status: Int = -1
+
     var playlistName: String = ""
 
     override fun onCreateView(
@@ -53,12 +55,14 @@ class PlaylistDetailsFragment : Fragment() {
 
         currentPlaylistPos = args.currentPlaylist
         playlistName = args.playlistName
+        status = args.status
+
 
 
         binding.btnAddSong.setOnClickListener {
             val action =
                 PlaylistDetailsFragmentDirections.actionPlaylistDetailsFragmentToSelectionFragment(
-                    currentPlaylistPos, 1
+                    currentPlaylistPos, 1,status
                 )
             findNavController().navigate(action)
         }
@@ -70,55 +74,111 @@ class PlaylistDetailsFragment : Fragment() {
         adapter = PlaylistDetailsAdapter(requireContext(), usercase, currentPlaylistPos)
         binding.playlistDetailsRV.adapter = adapter
 
+        viewModel.isConnected.observe(viewLifecycleOwner) {
+            if (it == false) {
+                lifecycleScope.launch {
+                    viewModel.getAllMusicByPlaylistOff(currentPlaylistPos).collect {
 
+                        binding.txtCountSong.text = it.size.toString() + " Songs"
 
-        lifecycleScope.launch {
-            viewModel.getAllMusicByPlaylist(currentPlaylistPos).collect {
+                        if (it.size >= 1) {
+                            Glide.with(requireContext())
+                                .load(it[0].image)
+                                .apply(
+                                    RequestOptions().placeholder(R.drawable.ic_new_playlist).centerCrop()
+                                )
+                                .into(binding.firstSongImg)
+                        }
 
-                binding.txtCountSong.text = it.size.toString() + " Songs"
+                        if (it.size >= 2) {
+                            Glide.with(requireContext())
+                                .load(it[1].image)
+                                .apply(
+                                    RequestOptions().placeholder(R.drawable.ic_new_playlist).centerCrop()
+                                )
+                                .into(binding.secondSongImg)
+                        }
 
-                if (it.size >= 1) {
-                    Glide.with(requireContext())
-                        .load(it[0].image)
-                        .apply(
-                            RequestOptions().placeholder(R.drawable.ic_new_playlist).centerCrop()
-                        )
-                        .into(binding.firstSongImg)
+                        if (it.size >= 3) {
+                            Glide.with(requireContext())
+                                .load(it[2].image)
+                                .apply(
+                                    RequestOptions().placeholder(R.drawable.ic_new_playlist).centerCrop()
+                                )
+                                .into(binding.threeSongImg)
+                        }
+                        if (it.size >= 4) {
+                            Glide.with(requireContext())
+                                .load(it[3].image)
+                                .apply(
+                                    RequestOptions().placeholder(R.drawable.ic_new_playlist)
+                                        .centerCrop()
+                                )
+                                .into(binding.fourSongImg)
+                        }
+
+                        adapter.submitList(it)
+
+                        binding.shimmerViewContainer.stopShimmerAnimation()
+                        binding.shimmerViewContainer.visibility = View.GONE
+                        binding.playlistDetailsRV.visibility = View.VISIBLE
+                    }
                 }
 
-                if (it.size >= 2) {
-                    Glide.with(requireContext())
-                        .load(it[1].image)
-                        .apply(
-                            RequestOptions().placeholder(R.drawable.ic_new_playlist).centerCrop()
-                        )
-                        .into(binding.secondSongImg)
-                }
-                if (it.size >= 3) {
-                    Glide.with(requireContext())
-                        .load(it[2].image)
-                        .apply(
-                            RequestOptions().placeholder(R.drawable.ic_new_playlist).centerCrop()
-                        )
-                        .into(binding.threeSongImg)
-                }
-                if (it.size >= 4) {
-                    Glide.with(requireContext())
-                        .load(it[3].image)
-                        .apply(
-                            RequestOptions().placeholder(R.drawable.ic_new_playlist)
-                                .centerCrop()
-                        )
-                        .into(binding.fourSongImg)
-                }
+            }
+            else{
+                lifecycleScope.launch {
+                    viewModel.getAllMusicByPlaylist(currentPlaylistPos).collect {
 
-                adapter.submitList(it)
+                        binding.txtCountSong.text = it.size.toString() + " Songs"
 
-                binding.shimmerViewContainer.stopShimmerAnimation()
-                binding.shimmerViewContainer.visibility = View.GONE
-                binding.playlistDetailsRV.visibility = View.VISIBLE
+                        if (it.size >= 1) {
+                            Glide.with(requireContext())
+                                .load(it[0].image)
+                                .apply(
+                                    RequestOptions().placeholder(R.drawable.ic_new_playlist).centerCrop()
+                                )
+                                .into(binding.firstSongImg)
+                        }
+
+                        if (it.size >= 2) {
+                            Glide.with(requireContext())
+                                .load(it[1].image)
+                                .apply(
+                                    RequestOptions().placeholder(R.drawable.ic_new_playlist).centerCrop()
+                                )
+                                .into(binding.secondSongImg)
+                        }
+
+                        if (it.size >= 3) {
+                            Glide.with(requireContext())
+                                .load(it[2].image)
+                                .apply(
+                                    RequestOptions().placeholder(R.drawable.ic_new_playlist).centerCrop()
+                                )
+                                .into(binding.threeSongImg)
+                        }
+                        if (it.size >= 4) {
+                            Glide.with(requireContext())
+                                .load(it[3].image)
+                                .apply(
+                                    RequestOptions().placeholder(R.drawable.ic_new_playlist)
+                                        .centerCrop()
+                                )
+                                .into(binding.fourSongImg)
+                        }
+
+                        adapter.submitList(it)
+
+                        binding.shimmerViewContainer.stopShimmerAnimation()
+                        binding.shimmerViewContainer.visibility = View.GONE
+                        binding.playlistDetailsRV.visibility = View.VISIBLE
+                    }
+                }
             }
         }
+
+
 
         binding.optionPlaylist.setOnClickListener {
             showBottomSheetPlaylist()

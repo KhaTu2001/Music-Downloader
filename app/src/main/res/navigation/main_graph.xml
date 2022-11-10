@@ -26,8 +26,8 @@
             android:id="@+id/action_homeFragment_to_downloadFragment"
             app:destination="@id/downloadFragment" />
         <action
-            android:id="@+id/action_homeFragment_self"
-            app:destination="@id/homeFragment" />
+            android:id="@+id/action_homeFragment_to_downloandingFragment"
+            app:destination="@id/downloandingFragment" />
     </fragment>
 
     <fragment
@@ -134,6 +134,10 @@
             android:name="playlistName"
             app:argType="string" />
 
+        <argument
+            android:name="status"
+            app:argType="integer" />
+
     </fragment>
     <fragment
         android:id="@+id/selectionFragment"
@@ -144,6 +148,10 @@
             app:argType="integer" />
         <argument
             android:name="from"
+            app:argType="integer" />
+
+        <argument
+            android:name="status"
             app:argType="integer" />
         <action
             android:id="@+id/action_selectionFragment_to_playlistDetailsFragment"
@@ -171,6 +179,11 @@
             app:destination="@id/selectionFragment" />
 
     </fragment>
+    <fragment
+        android:id="@+id/downloandingFragment"
+        android:name="com.ddona.music_download_ms3_tunk.ui.fragment.DownloandingFragment"
+        android:label="fragment_downloanding"
+        tools:layout="@layout/fragment_downloanding" />
 
 
 </navigation>

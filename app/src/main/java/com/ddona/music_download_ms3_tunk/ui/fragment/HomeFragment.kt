@@ -4,21 +4,25 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation.findNavController
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.CompositePageTransformer
 import androidx.viewpager2.widget.MarginPageTransformer
 import androidx.viewpager2.widget.ViewPager2
+import com.ddona.music_download_ms3_tunk.R
 import com.ddona.music_download_ms3_tunk.adapter.*
 import com.ddona.music_download_ms3_tunk.callback.*
 import com.ddona.music_download_ms3_tunk.databinding.FragmentHomeBinding
 import com.ddona.music_download_ms3_tunk.model.Data
+import com.ddona.music_download_ms3_tunk.ui.activity.MainActivity
 import com.ddona.music_download_ms3_tunk.ui.activity.PlayerActivity
 import com.ddona.music_download_ms3_tunk.user_case.UseCases
 import com.ddona.music_download_ms3_tunk.viewmodel.SongViewModel
@@ -281,7 +285,7 @@ class HomeFragment : Fragment(), ListenedSongItemClick, GenreItemClick, Trending
 
     override fun onResume() {
         super.onResume()
-        
+
 
         binding.shimmerViewContainer.startShimmerAnimation()
         if (binding.shimmerViewContainer.visibility == View.GONE)
@@ -289,6 +293,16 @@ class HomeFragment : Fragment(), ListenedSongItemClick, GenreItemClick, Trending
 
 
     }
+
+    override fun onPause() {
+        Log.d("Dfg", "onPause: ")
+
+        super.onPause()
+        this@HomeFragment
+        onDestroy()
+    }
+
+
 
 
 }

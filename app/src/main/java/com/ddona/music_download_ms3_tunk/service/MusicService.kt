@@ -3,9 +3,9 @@ package com.ddona.music_download_ms3_tunk.service
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.media.AudioManager
-import android.media.AudioManager.FLAG_ALLOW_RINGER_MODES
-import android.media.AudioManager.STREAM_NOTIFICATION
 import android.media.MediaPlayer
 import android.media.audiofx.LoudnessEnhancer
 import android.os.*
@@ -13,6 +13,8 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.core.app.NotificationCompat
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
 import com.ddona.music_download_ms3_tunk.App
 import com.ddona.music_download_ms3_tunk.R
 import com.ddona.music_download_ms3_tunk.model.formatDuration
@@ -29,6 +31,8 @@ class MusicService: Service(), AudioManager.OnAudioFocusChangeListener {
     private lateinit var mediaSession: MediaSessionCompat
     lateinit var audioManager: AudioManager
     private lateinit var runnable: Runnable
+    private lateinit var imgArt: Bitmap
+
 
     override fun onBind(intent: Intent?): IBinder {
         mediaSession = MediaSessionCompat(baseContext, "My Music")
@@ -40,6 +44,7 @@ class MusicService: Service(), AudioManager.OnAudioFocusChangeListener {
             return this@MusicService
         }
     }
+
 
     fun showNotification(playPauseBtn: Int){
 
@@ -57,6 +62,8 @@ class MusicService: Service(), AudioManager.OnAudioFocusChangeListener {
 
         val exitIntent = Intent(this, NotificationReceiver::class.java).setAction(App.EXIT)
         val exitPendingIntent = PendingIntent.getBroadcast(this, 0, exitIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+
+
 
 
         val notification = NotificationCompat.Builder(this, App.CHANNEL_ID)
@@ -122,7 +129,23 @@ class MusicService: Service(), AudioManager.OnAudioFocusChangeListener {
             })
         }
 
-        startForeground(13, notification)
+        Glide.with(baseContext)
+            .asBitmap()
+            .load(PlayerActivity.musicList[PlayerActivity.songPosition].image)
+            .into(object : CustomTarget<Bitmap>(){
+                override fun onResourceReady(resource: Bitmap, transition: com.bumptech.glide.request.transition.Transition<in Bitmap>?) {
+                    imgArt = resource
+                    notification.largeIcon = imgArt
+                    startForeground(13, notification)
+
+                }
+                override fun onLoadCleared(placeholder: Drawable?) {
+                    // this is called when imageView is cleared on lifecycle call or for
+                    // some other reason.
+                    // if you are referencing the bitmap somewhere else too other than this imageView
+                    // clear it here as you can no longer have the bitmap
+                }
+            })
 
     }
 

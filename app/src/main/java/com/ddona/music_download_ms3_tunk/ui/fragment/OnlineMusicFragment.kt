@@ -180,7 +180,7 @@ class OnlineMusicFragment : Fragment(), PlaylistListSongItemClick {
 
     override fun ListSongOnClick(index: Int, playlistName: String) {
         val action = PlaylistFragmentDirections.actionPlaylistFragmentToPlaylistDetailsFragment(
-            index, playlistName
+            index, playlistName,0
         )
         findNavController().navigate(action)
     }

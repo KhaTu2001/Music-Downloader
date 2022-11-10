@@ -22,6 +22,8 @@ class PlaylistDetailsTemporaryFragment : Fragment() {
 
     private var currentPlaylistPos: Int = -1
     var playlistName: String = ""
+    var status: Int = -1
+
 
     val viewModel: SongViewModel by activityViewModels()
 
@@ -41,6 +43,8 @@ class PlaylistDetailsTemporaryFragment : Fragment() {
             else{
                 currentPlaylistPos =  it[it.size - 1].playList_ID!!
                 playlistName =  it[it.size - 1].playlistName
+                status = it[it.size - 1].status
+
             }
 
             binding.playlistName.text = playlistName
@@ -48,7 +52,8 @@ class PlaylistDetailsTemporaryFragment : Fragment() {
                 val action =
                     PlaylistDetailsTemporaryFragmentDirections.actionPlaylistDetailsTemporaryFragmentToSelectionFragment(
                         currentPlaylistPos,
-                        2
+                        2,
+                        status
                     )
                 findNavController().navigate(action)
             }

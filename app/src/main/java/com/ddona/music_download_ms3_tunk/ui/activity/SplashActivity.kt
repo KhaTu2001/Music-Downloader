@@ -26,16 +26,16 @@ class SplashActivity : AppCompatActivity() {
         binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        if (ContextCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
-
-            createDirectory("Music Downloader")
-            Log.d("asdsad", "onCreate: ")
-
-        }else
-        {
-
-            askPermission()
-        }
+//        if (ContextCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
+//
+//            createDirectory("Music Downloader")
+//            Log.d("asdsad", "onCreate: ")
+//
+//        }else
+//        {
+//
+//            askPermission()
+//        }
 
         lifecycleScope.launch {
             delay(1000)
@@ -46,37 +46,34 @@ class SplashActivity : AppCompatActivity() {
         }
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        @NonNull permissions: Array<String?>,
-        @NonNull grantResults: IntArray
-    ) {
-        if (requestCode == PERMISSION_REQUEST_CODE) {
-            if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                createDirectory("Music Downloader")
-            } else {
-                Toast.makeText(this@SplashActivity, "Permission Denied", Toast.LENGTH_SHORT).show()
-            }
-        }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    }
+//    override fun onRequestPermissionsResult(
+//        requestCode: Int,
+//        @NonNull permissions: Array<String?>,
+//        @NonNull grantResults: IntArray
+//    ) {
+//        if (requestCode == PERMISSION_REQUEST_CODE) {
+//            if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                createDirectory("Music Downloader")
+//            } else {
+//                Toast.makeText(this@SplashActivity, "Permission Denied", Toast.LENGTH_SHORT).show()
+//            }
+//        }
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+//    }
+//
+//    private fun askPermission() {
+//        ActivityCompat.requestPermissions(
+//            this,
+//            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+//            PERMISSION_REQUEST_CODE
+//        )
+//    }
+//
+//
+//    private fun createDirectory(folderName: String) {
+//        val file = File(Environment.getExternalStorageDirectory(), folderName)
+//        if (!file.exists()) file.mkdir()
+//        else Log.d("dfdf", "createDirectory: $file")
+//    }
 
-    private fun askPermission() {
-        ActivityCompat.requestPermissions(
-            this,
-            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-            PERMISSION_REQUEST_CODE
-        )
-    }
-
-
-    private fun createDirectory(folderName: String) {
-        val file = File(Environment.getExternalStorageDirectory(), folderName)
-        if (!file.exists()) {
-            file.mkdir()
-            Toast.makeText(this@SplashActivity, "Successful", Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(this@SplashActivity, "Folder Already Exists", Toast.LENGTH_SHORT).show()
-        }
-    }
 }

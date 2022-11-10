@@ -63,14 +63,21 @@ class SearchSongAdapter(
 
             CoroutineScope(Dispatchers.IO).launch {
                 userCases.checkSongID.invoke(playlist_ID, data.id).collect {
-                    var check = it
-                    Log.d("dfdsf", " $check")
+                    val check = it
 
                     withContext(Dispatchers.Main) {
                         if (check > 0) {
                             isAdded = true
                             binding.songAdded.setImageResource(R.drawable.ic_remove_to_selectlist)
+                            binding.songAdded.setOnClickListener {
+                                CoroutineScope(Dispatchers.IO).launch{
+                                    userCases.deleteMusicFromPlaylistUserCase.invoke(playlist_ID,data.id)
+                                }
+                                isAdded = false
+                                binding.songAdded.setImageResource(R.drawable.ic_add_to_selectlist)
+                                customDialogsuccess(context,"Remove the song from playlist ")
 
+                            }
                         }
                     }
                 }

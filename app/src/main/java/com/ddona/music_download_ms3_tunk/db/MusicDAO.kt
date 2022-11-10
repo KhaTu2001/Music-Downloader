@@ -16,6 +16,9 @@ interface MusicDAO {
     @Query("SELECT * FROM music where playlist_id  = :playlistId")
      fun getSongBYPlaylist(playlistId : Int): Flow<List<Data>>
 
+    @Query("SELECT * FROM music where playlist_id  = :playlistId and status = 1")
+    fun getSongBYPlaylistOff(playlistId : Int): Flow<List<Data>>
+
     @Query("SELECT * FROM playlistMusic where status = :status")
     fun getAllPlaylist(status:Int): Flow<List<playlistMusic>>
 
@@ -58,7 +61,7 @@ interface MusicDAO {
     @Query("DELETE FROM music where playlist_id = :playlistId")
     fun deleteMusicSong(playlistId: Int)
 
-    @Query("DELETE FROM songDownloaded where id = :id")
+    @Query("DELETE FROM songDownloaded where name = :id")
     fun deleteMusicDonwloaded(id: String)
 
 }

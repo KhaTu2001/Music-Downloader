@@ -15,7 +15,11 @@ import com.google.android.material.tabs.TabLayoutMediator
 class DownloadFragment : Fragment() {
 
     private lateinit var binding: FragmentDownloadBinding
-    private val tabs = arrayOf("Downloanded", "Downloanding")
+    companion object{
+        var index:Int = 0
+        var tabs = arrayOf("Downloaded", "Downloading")
+
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -23,7 +27,7 @@ class DownloadFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentDownloadBinding.inflate(inflater)
-        val adapter = DownloadPagerAdapter(this)
+        val adapter = DownloadPagerAdapter(this, index)
         binding.vpDownload.adapter = adapter
 
         TabLayoutMediator(binding.tlDownload, binding.vpDownload) { tab, index ->
@@ -31,8 +35,11 @@ class DownloadFragment : Fragment() {
         }.attach()
 
 
+
+
         return binding.root
     }
+
 
 
 }

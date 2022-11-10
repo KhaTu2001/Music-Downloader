@@ -1,19 +1,16 @@
 package com.ddona.music_download_ms3_tunk.ui.fragment
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.SearchView
 import androidx.core.widget.addTextChangedListener
 import androidx.navigation.fragment.findNavController
 import com.codingstuff.imageslider.CountryAdapter
 import com.ddona.music_download_ms3_tunk.R
 import com.ddona.music_download_ms3_tunk.callback.CountryItemClick
 import com.ddona.music_download_ms3_tunk.databinding.FragmentChangeRegionBinding
-import com.ddona.music_download_ms3_tunk.fr.SearchFragment
 import com.ddona.music_download_ms3_tunk.model.Country
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope

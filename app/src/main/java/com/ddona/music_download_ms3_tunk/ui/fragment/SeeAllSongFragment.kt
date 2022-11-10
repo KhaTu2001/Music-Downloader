@@ -33,8 +33,8 @@ class SeeAllSongFragment : Fragment(), ListenedSongItemClick, GenreItemClick {
     var downloadListSong: ArrayList<Data> = ArrayList()
     var trendingListSong: ArrayList<Data> = ArrayList()
 
-    companion object{
-        var localListSong:  ArrayList<Data> = ArrayList()
+    companion object {
+        var localListSong: ArrayList<Data> = ArrayList()
     }
 
     @Inject
@@ -48,19 +48,19 @@ class SeeAllSongFragment : Fragment(), ListenedSongItemClick, GenreItemClick {
         // Inflate the layout for this fragment
         binding = FragmentSeeAllSongBinding.inflate(inflater)
 
-        if(args.data == 0){
+        if (args.data == 0) {
             topTrendingRV()
         }
 
-        if(args.data == 1){
+        if (args.data == 1) {
             topListenedRV()
         }
 
-        if(args.data == 2){
+        if (args.data == 2) {
             topDownRV()
         }
 
-        if(args.data == 3){
+        if (args.data == 3) {
             genreRV()
         }
 
@@ -69,12 +69,14 @@ class SeeAllSongFragment : Fragment(), ListenedSongItemClick, GenreItemClick {
 
     private fun topTrendingRV() {
         binding.topTextview.text = "Top Trending"
-        val ttadapter = TopListAdapter(requireContext(),this,usercase)
+        val ttadapter = TopListAdapter(requireContext(), this, usercase)
         binding.rvSeeAllSong.setHasFixedSize(true)
         binding.rvSeeAllSong.adapter = ttadapter
         viewModel.topTrending.observe(viewLifecycleOwner) {
-            ttadapter.submitList( it)
+
+            ttadapter.submitList(it)
             trendingListSong.addAll(it)
+
 
 
             binding.shimmerViewContainer.stopShimmerAnimation()
@@ -103,12 +105,14 @@ class SeeAllSongFragment : Fragment(), ListenedSongItemClick, GenreItemClick {
 
     private fun topDownRV() {
         binding.topTextview.text = "Top Download"
-        val tdadapter = TopListAdapter(requireContext(),this,usercase)
+        val tdadapter = TopListAdapter(requireContext(), this, usercase)
         binding.rvSeeAllSong.setHasFixedSize(true)
         binding.rvSeeAllSong.adapter = tdadapter
         viewModel.topDownload.observe(viewLifecycleOwner) {
-            tdadapter.submitList( it)
+
+            tdadapter.submitList(it)
             downloadListSong.addAll(it)
+
             binding.shimmerViewContainer.stopShimmerAnimation()
             binding.shimmerViewContainer.visibility = View.GONE
 
@@ -119,12 +123,14 @@ class SeeAllSongFragment : Fragment(), ListenedSongItemClick, GenreItemClick {
 
     private fun topListenedRV() {
         binding.topTextview.text = "Top Listened"
-        val tladapter = TopListAdapter(requireContext(),this,usercase)
+        val tladapter = TopListAdapter(requireContext(), this, usercase)
         binding.rvSeeAllSong.setHasFixedSize(true)
         binding.rvSeeAllSong.adapter = tladapter
         viewModel.topListened.observe(viewLifecycleOwner) {
+
             tladapter.submitList(it)
             topListSong.addAll(it)
+
             binding.shimmerViewContainer.stopShimmerAnimation()
             binding.shimmerViewContainer.visibility = View.GONE
 
@@ -136,20 +142,20 @@ class SeeAllSongFragment : Fragment(), ListenedSongItemClick, GenreItemClick {
     override fun GenreOnClick(keySearch: String, nameGenre: String) {
         val keysearch = keySearch
         val nameGenre = nameGenre
-        val action = SeeAllSongFragmentDirections.actionSeeAllSongFragmentToSeeAllSongByGenreFragment(
-            keysearch,
-            nameGenre
-        )
+        val action =
+            SeeAllSongFragmentDirections.actionSeeAllSongFragmentToSeeAllSongByGenreFragment(
+                keysearch,
+                nameGenre
+            )
         Navigation.findNavController(binding.root).navigate(action)
         Log.d("dfgdf", "GenreOnClick:$keysearch , $nameGenre  ")
     }
 
 
-
     override fun ListOnClick(index: Int) {
         val intent = Intent(context, PlayerActivity::class.java)
-        intent.putExtra("index",index)
-        intent.putExtra("from","SeeAllSong")
+        intent.putExtra("index", index)
+        intent.putExtra("from", "SeeAllSong")
         startActivity(intent)
 
     }
@@ -158,15 +164,12 @@ class SeeAllSongFragment : Fragment(), ListenedSongItemClick, GenreItemClick {
         super.onResume()
         binding.shimmerViewContainer.startShimmerAnimation()
 
-        if (binding.shimmerViewContainer.visibility == View.GONE){
+        if (binding.shimmerViewContainer.visibility == View.GONE) {
             binding.rvSeeAllSong.visibility = View.VISIBLE
         }
 
 
-
     }
-
-
 
 
 }

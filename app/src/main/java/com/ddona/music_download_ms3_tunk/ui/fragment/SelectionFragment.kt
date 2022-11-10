@@ -15,6 +15,8 @@ import com.ddona.music_download_ms3_tunk.R
 import com.ddona.music_download_ms3_tunk.adapter.SearchSongAdapter
 import com.ddona.music_download_ms3_tunk.databinding.DeletePlaylistDialogBinding
 import com.ddona.music_download_ms3_tunk.databinding.FragmentSelectionBinding
+import com.ddona.music_download_ms3_tunk.model.Country
+import com.ddona.music_download_ms3_tunk.model.Data
 import com.ddona.music_download_ms3_tunk.user_case.UseCases
 import com.ddona.music_download_ms3_tunk.viewmodel.SongViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -32,7 +34,7 @@ class SelectionFragment : Fragment() {
     }
 
     val viewModel: SongViewModel by activityViewModels()
-
+    var OfflineSongListSearch: ArrayList<Data> = ArrayList()
     private val args: SelectionFragmentArgs by navArgs()
 
     @Inject
@@ -48,23 +50,47 @@ class SelectionFragment : Fragment() {
 
         val playlistID = args.currentPlaylist
 
+        val status = args.status
+
         val adapter = SearchSongAdapter(playlistID, userCase,requireContext())
 
+
         var job: Job? = null
-        binding.edtSearch.addTextChangedListener { editable ->
-            job?.cancel()
-            job = MainScope().launch {
-                editable?.let {
-                    if (editable.toString().isNotEmpty()) {
-                        viewModel.searchSong(editable.toString())
-                        binding.txtAdd.text = "Search results for \"$editable \" "
-                    } else binding.txtAdd.text = "Recommended for you"
+
+
+        if(status == 1) {
+
+            binding.edtSearch.addTextChangedListener { editable ->
+                job?.cancel()
+                OfflineSongListSearch = ArrayList()
+                job = MainScope().launch {
+                    editable?.let {
+                        for (music in DownloadedFragment.musicListMA)
+                            if (music.name.lowercase().contains(editable)) OfflineSongListSearch.add(music)
+
+                    }
+                    adapter.submitList(OfflineSongListSearch)
+
                 }
             }
         }
 
-        viewModel.searchList.observe(viewLifecycleOwner) {
-            adapter.submitList(it)
+        else{
+            binding.edtSearch.addTextChangedListener { editable ->
+                job?.cancel()
+                job = MainScope().launch {
+                    editable?.let {
+                        if (editable.toString().isNotEmpty()) {
+                            viewModel.searchSong(editable.toString())
+                            binding.txtAdd.text = "Search results for \"$editable \" "
+                        } else binding.txtAdd.text = "Recommended for you"
+                    }
+                }
+            }
+            viewModel.searchList.observe(viewLifecycleOwner) {
+                adapter.submitList(it)
+            }
+
         }
 
 
@@ -75,7 +101,7 @@ class SelectionFragment : Fragment() {
         }
 
         binding.exitBtn.setOnClickListener {
-            if(from ==1) findNavController().popBackStack()
+            if(from == 1) findNavController().popBackStack()
 
             else{
                 val action = SelectionFragmentDirections.actionSelectionFragmentToPlaylistFragment()

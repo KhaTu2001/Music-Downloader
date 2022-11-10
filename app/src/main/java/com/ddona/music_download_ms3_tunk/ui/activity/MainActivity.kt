@@ -1,6 +1,5 @@
 package com.ddona.music_download_ms3_tunk.ui.activity
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -8,12 +7,10 @@ import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -38,8 +35,6 @@ import com.ddona.music_download_ms3_tunk.viewmodel.SongViewModel
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.AndroidEntryPoint
-import java.io.File
-
 import javax.inject.Inject
 
 
@@ -60,38 +55,18 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         lateinit var binding: ActivityMainBinding
-        lateinit var MusicListMA: ArrayList<Data>
-
         var playlistListOnl: ArrayList<playlistMusic> = ArrayList()
         var playlistListOff: ArrayList<playlistMusic> = ArrayList()
 
-
-        var sortOrder: Int = 0
-        val sortingList = arrayOf(
-            MediaStore.Audio.Media.DATE_ADDED + " DESC",
-            MediaStore.Audio.Media.TITLE,
-            MediaStore.Audio.Media.SIZE + " DESC",
-            MediaStore.Audio.Media.MIME_TYPE + "mp3",
-        )
         var permssion = 1
     }
-
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
-
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
-
-
-
-        initializeLayout()
 
         val navHostFragment =
             supportFragmentManager
@@ -108,21 +83,19 @@ class MainActivity : AppCompatActivity() {
                 binding.bottomNav.visibility = View.VISIBLE
             }
         }
-        appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.homeFragment,
-                R.id.downloadFragment,
-                R.id.playlistFragment,
-                R.id.settingFragment
-            )
-        )
-
+//        appBarConfiguration = AppBarConfiguration(
+//            setOf(
+//                R.id.homeFragment,
+//                R.id.downloadFragment,
+//                R.id.playlistFragment,
+//                R.id.settingFragment
+//            )
+//        )
 
         setSupportActionBar(binding.toolbar)
-        setupActionBarWithNavController(navController, appBarConfiguration)
+        setupActionBarWithNavController(navController)
 
         binding.bottomNav.setupWithNavController(navController)
-
 
         if (requestRuntimePermission()) {
             //for retrieving favourites data using shared preferences
@@ -135,7 +108,6 @@ class MainActivity : AppCompatActivity() {
                     GsonBuilder().create().fromJson(jsonString, typeToken)
                 FavouriteFragment.favouriteList.addAll(data)
             }
-
         }
 
         val pref = getSharedPreferences("COUNTRY", MODE_PRIVATE)
@@ -146,15 +118,11 @@ class MainActivity : AppCompatActivity() {
             ChangeRegionFragment.id_country = data1
             ChangeRegionFragment.name_country = data2
             ChangeRegionFragment.flag_country = data3
-
         }
-
-
     }
 
-
     override fun onSupportNavigateUp(): Boolean {
-        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+        return navController.navigateUp() || super.onSupportNavigateUp()
     }
 
     override fun onDestroy() {
@@ -163,23 +131,18 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    @RequiresApi(Build.VERSION_CODES.R)
     override fun onResume() {
         super.onResume()
-        //for storing favourites data using shared preferences
 
-
+        PlayerActivity.checkFlag = false
         if (PlayerActivity.musicService != null) {
             binding.nowPlaying.visibility = View.VISIBLE
         }
-
-
 
         viewModel.playlistmusicListOnl.observe(this@MainActivity) {
             if (it != playlistListOnl) {
                 playlistListOnl = ArrayList()
                 playlistListOnl.addAll(it)
-
 
             }
         }
@@ -189,12 +152,9 @@ class MainActivity : AppCompatActivity() {
                 playlistListOff = ArrayList()
                 playlistListOff.addAll(it)
 
-
             }
 
-
         }
-
 
     }
 
@@ -215,92 +175,7 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-    @RequiresApi(Build.VERSION_CODES.R)
-    @SuppressLint("SetTextI18n")
-    private fun initializeLayout() {
-        MusicListMA = getAllAudio()
-        Log.d("DSfdsf", "$MusicListMA ")
-    }
 
-
-    @RequiresApi(Build.VERSION_CODES.R)
-    private fun getAllAudio(): ArrayList<Data> {
-        val tempList = ArrayList<Data>()
-
-        val selection = MediaStore.Audio.Media.IS_MUSIC + " != 0"
-        val projection = arrayOf(
-            MediaStore.Audio.Media._ID,
-            MediaStore.Audio.Media.TITLE,
-            MediaStore.Audio.Media.ALBUM,
-            MediaStore.Audio.Media.ALBUM_ID,
-            MediaStore.Audio.Media.ARTIST,
-            MediaStore.Audio.Media.ARTIST_ID,
-            MediaStore.Audio.Media.DURATION,
-            MediaStore.Audio.Media.DATE_ADDED,
-            MediaStore.Audio.Media.DATA,
-            MediaStore.Audio.Media.ALBUM_ID
-        )
-        val cursor = this.contentResolver.query(
-            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, projection, selection, null,
-            sortingList[sortOrder], null
-        )
-        if (cursor != null) {
-            if (cursor.moveToFirst())
-                do {
-                    val albumId =
-                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID))
-                            ?: "Unknown"
-                    val albumName =
-                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM))
-                            ?: "Unknown"
-                    val artistId =
-                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST_ID))
-                            ?: "Unknown"
-                    val artistName =
-                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST))
-                            ?: "Unknown"
-                    val audio =
-                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA))
-                            ?: "Unknown"
-                    val name =
-                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE))
-                            ?: "Unknown"
-                    val id =
-                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media._ID))
-                            ?: "Unknown"
-                    val duration =
-                        cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))
-                    val albumIdC =
-                        cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID))
-                            .toString()
-                    val uri = Uri.parse("content://media/external/audio/albumart")
-                    val image = Uri.withAppendedPath(uri, albumIdC).toString()
-                    val music = Data(
-                        albumId = albumId,
-                        albumName = albumName,
-                        artistId = artistId,
-                        artistName = artistName,
-                        audio = audio,
-                        duration = duration,
-                        id = id,
-                        status = 1,
-                        image = image,
-                        name = name,
-                        audioDownload = null,
-
-                        )
-                    val file = File(music.audio)
-                    if (file.exists()) {
-                            tempList.add(music)
-                    }
-
-                } while (cursor.moveToNext())
-            cursor.close()
-        }
-
-
-        return tempList
-    }
 
     override fun onPause() {
         super.onPause()
@@ -395,6 +270,4 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-//    audio=/storage/emulated/0/Wish_You_Were_Here_-_the.madpix.project.mp3
-//    audio=/storage/emulated/0/Download/Voice Changer/Wish You Were Here-Helium.mp3
 }

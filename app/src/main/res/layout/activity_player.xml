@@ -176,6 +176,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Last Christmas"
+                        android:maxLines="1"
+                        android:ellipsize="end"
                         android:textColor="@color/white"
                         android:textSize="18dp" />
 
@@ -184,6 +186,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:alpha="0.8"
+                        android:maxLines="1"
+                        android:ellipsize="end"
                         android:text="Devon Lane"
                         android:textColor="@color/white"
                         android:textSize="14dp" />

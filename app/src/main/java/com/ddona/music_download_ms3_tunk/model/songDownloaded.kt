@@ -9,11 +9,11 @@ data class songDownloaded(
     val id: String,
     var playlist_id:Int = -1,
     val albumName: String,
-    val artistId: String,
+    val artistId: String?,
     val artistName: String,
     val audio: String,
     val duration: Long,
-    val albumId: String,
+    val albumId: String?,
     val image: String,
     val name: String,
     val status: Int = 1

@@ -14,8 +14,6 @@ private var downloadInfo: DownloadInfo? = null
 fun startDownloadSong(url:String,context: Context){
 
 
-
-
     if(MainActivity.permssion == 1)
     try {
         val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager

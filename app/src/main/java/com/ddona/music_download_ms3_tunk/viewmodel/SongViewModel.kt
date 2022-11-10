@@ -43,7 +43,7 @@ class SongViewModel @Inject constructor(
 
         connectivityObserver = NetworkConnectivityObserver(application.applicationContext)
 
-        viewModelScope.launch(Dispatchers.Main){
+        viewModelScope.launch(Dispatchers.Main) {
             getAllPlaylistList()
 
         }
@@ -65,7 +65,6 @@ class SongViewModel @Inject constructor(
             getAllPlaylistList()
 
 
-
         }.launchIn(viewModelScope)
 
 
@@ -79,6 +78,7 @@ class SongViewModel @Inject constructor(
 
 
     suspend fun getAllTopDownLoad() {
+
         val response = songApi.getAllTopDownLoad(ChangeRegionFragment.id_country)
         topDownload.postValue(response.data)
     }
@@ -90,8 +90,14 @@ class SongViewModel @Inject constructor(
 
 
     private suspend fun getAllTopListend() {
-        val response = songApi.getAllTopListend().data
-        topListened.postValue(response)
+//        var listI: ArrayList<Data> = ArrayList()
+//        for (i in songApi.getAllTopListend().data) {
+//            if (i.audioDownload!! != "" && i.audio != "") {
+//                listI.add(i)
+                val  response = songApi.getAllTopListend().data
+                topListened.postValue(response)
+//            }
+//        }
     }
 
     suspend fun getAllSongByGenres(keysearch: String) {
@@ -105,8 +111,11 @@ class SongViewModel @Inject constructor(
 
     }
 
-    fun getAllMusicByPlaylist(playlist_id: Int): Flow<List<Data>> = musicDAO.getSongBYPlaylist(playlist_id)
+    fun getAllMusicByPlaylist(playlist_id: Int): Flow<List<Data>> =
+        musicDAO.getSongBYPlaylist(playlist_id)
 
+    fun getAllMusicByPlaylistOff(playlist_id: Int): Flow<List<Data>> =
+        musicDAO.getSongBYPlaylistOff(playlist_id)
 
     fun getAllPlaylistOnl(status: Int): Flow<List<playlistMusic>> = musicDAO.getAllPlaylist(status)
     fun getAllPlaylistOff(status: Int): Flow<List<playlistMusic>> = musicDAO.getAllPlaylist(status)
@@ -133,8 +142,6 @@ class SongViewModel @Inject constructor(
 
         }
     }
-
-
 
 
 }

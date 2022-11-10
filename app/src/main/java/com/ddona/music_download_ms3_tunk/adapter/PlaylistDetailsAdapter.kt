@@ -2,6 +2,8 @@ package com.ddona.music_download_ms3_tunk.adapter
 
 import android.content.Context
 import android.content.Intent
+import android.media.RingtoneManager
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +18,7 @@ import com.ddona.music_download_ms3_tunk.databinding.DeletePlaylistDialogBinding
 import com.ddona.music_download_ms3_tunk.databinding.ItemTopListenedBinding
 import com.ddona.music_download_ms3_tunk.model.Data
 import com.ddona.music_download_ms3_tunk.model.favouriteCheckerID
+import com.ddona.music_download_ms3_tunk.ui.activity.MainActivity
 import com.ddona.music_download_ms3_tunk.ui.activity.PlayerActivity
 import com.ddona.music_download_ms3_tunk.ui.fragment.FavouriteFragment
 import com.ddona.music_download_ms3_tunk.ui.fragment.MyMusicFragment
@@ -31,7 +34,7 @@ import kotlinx.coroutines.launch
 class PlaylistDetailsAdapter(
     private var context: Context,
     var usercase: UseCases,
-    var playLisiID: Int,
+    private var playLisiID: Int,
 
     ):ListAdapter<Data,PlaylistDetailsAdapter.ViewHolder>(
     SongDiffCallback()
@@ -72,7 +75,7 @@ class PlaylistDetailsAdapter(
 
     }
     fun showBottomSheetPlaylist(data: Data) {
-        val bottomSheet: BottomSheetDialog =
+        val bottomSheet =
             BottomSheetDialog(context)
         bottomSheet.setContentView(R.layout.bottomsheet_playlist_option)
 
@@ -129,7 +132,7 @@ class PlaylistDetailsAdapter(
 
 
             dialog.show()
-            dialog.setCanceledOnTouchOutside(false);
+            dialog.setCanceledOnTouchOutside(false)
 
 
         }
@@ -137,21 +140,29 @@ class PlaylistDetailsAdapter(
         addShareSong?.setOnClickListener {
             val shareIntent = Intent()
             shareIntent.action = Intent.ACTION_SEND
-            shareIntent.setType("text/plain")
+            shareIntent.type = "text/plain"
             shareIntent.putExtra(Intent.EXTRA_TEXT, data.audio)
             startActivity(context, Intent.createChooser(shareIntent, "Sharing Music File!!"), null)
         }
 
-        setAsRingtone?.setOnClickListener {
+        if(data.status == 0) setAsRingtone!!.visibility = View.GONE
+        else setAsRingtone!!.visibility = View.VISIBLE
 
+
+        setAsRingtone.setOnClickListener {
+            val uri = Uri.parse(data.audio)
+
+            MainActivity.RingtoneUtils.setRingtone(context, uri, RingtoneManager.TYPE_RINGTONE)
+
+            bottomSheet.dismiss()
         }
 
 
-        var fIndex = favouriteCheckerID(data.id)
-        var txtAddFavorite = bottomSheet.findViewById<TextView>(R.id.txt_add_to_favorite)
+        val fIndex = favouriteCheckerID(data.id)
+        val txtAddFavorite = bottomSheet.findViewById<TextView>(R.id.txt_add_to_favorite)
 
-        if (fIndex != -1) txtAddFavorite?.setText("Remove from Favorite")
-        else txtAddFavorite?.setText("Add to Favorite")
+        if (fIndex != -1) txtAddFavorite?.text = "Remove from Favorite"
+        else txtAddFavorite?.text = "Add to Favorite"
 
         addToFavourite?.setOnClickListener {
             if (fIndex != -1) {

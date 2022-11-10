@@ -1,12 +1,11 @@
 package com.ddona.music_download_ms3_tunk.adapter
 
-import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.media.RingtoneManager
 import android.net.Uri
-import android.provider.MediaStore
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -18,6 +17,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.CustomTarget
 import com.ddona.music_download_ms3_tunk.R
 import com.ddona.music_download_ms3_tunk.callback.ListSongItemClick
 import com.ddona.music_download_ms3_tunk.databinding.CreateNewPlaylistDialogBinding
@@ -26,9 +26,11 @@ import com.ddona.music_download_ms3_tunk.model.Data
 import com.ddona.music_download_ms3_tunk.model.playlistMusic
 import com.ddona.music_download_ms3_tunk.ui.activity.MainActivity
 import com.ddona.music_download_ms3_tunk.ui.activity.PlayerActivity
+import com.ddona.music_download_ms3_tunk.ui.fragment.DownloadedFragment
 import com.ddona.music_download_ms3_tunk.user_case.UseCases
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.ixuea.android.downloader.domain.DownloadInfo
 import kotlinx.coroutines.*
 import java.io.File
 import java.util.*
@@ -37,6 +39,7 @@ import java.util.*
 private lateinit var bottomSheet2: BottomSheetDialog
 private lateinit var music2: Data
 private lateinit var adapter: PlaylistAdapter
+private lateinit var imgArt: Bitmap
 
 
 class MusicAdapter(
@@ -55,7 +58,6 @@ class MusicAdapter(
         val option = binding.songOption
         val root = binding.itemsSong
     }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyHolder {
 
 
@@ -87,11 +89,17 @@ class MusicAdapter(
         holder.index.visibility = View.GONE
 
         Glide.with(context)
+            .asBitmap()
             .load(musicList[position].image)
-            .apply(
-                RequestOptions().placeholder(R.drawable.music_player_icon_slash_screen).centerCrop()
-            )
-            .into(holder.image)
+            .into( object : CustomTarget<Bitmap>(){
+                override fun onResourceReady(resource: Bitmap, transition: com.bumptech.glide.request.transition.Transition<in Bitmap>?) {
+                    imgArt = resource
+                    holder.image.setImageBitmap(imgArt)
+
+                }
+                override fun onLoadCleared(placeholder: Drawable?) {
+                }
+            })
 
         holder.root.setOnClickListener {
             sendIntent(ref = "MusicAdapter", pos = position)
@@ -191,35 +199,31 @@ class MusicAdapter(
 
         setRingtone?.setOnClickListener {
 
-            val filepath = "/sdcard/sample/" + data.audio + ""
-            val k = File( filepath) // path is a file playing
+            val uri = Uri.parse(data.audio)
 
-
-            val values = ContentValues()
-            values.put(MediaStore.MediaColumns.DATA, k.absolutePath)
-            values.put(MediaStore.MediaColumns.SIZE, k.length())
-            values.put(MediaStore.Audio.Media.ARTIST, data.artistName)
-            values.put(MediaStore.Audio.Media.TITLE, data.name)
-            values.put(MediaStore.Audio.Media.DURATION, data.duration)
-            values.put(MediaStore.Audio.Media.IS_RINGTONE, true)
-            values.put(MediaStore.Audio.Media.IS_NOTIFICATION, true)
-            values.put(MediaStore.Audio.Media.IS_ALARM, true)
-            values.put(MediaStore.Audio.Media.IS_MUSIC, false)
-
-
-
-
-            val newUri: Uri = context.getContentResolver().insert(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, values)!!
-
-            MainActivity.RingtoneUtils.setRingtone(context, newUri,RingtoneManager.TYPE_RINGTONE);
+            MainActivity.RingtoneUtils.setRingtone(context, uri,RingtoneManager.TYPE_RINGTONE)
 
             bottomSheet.dismiss()
         }
 
         deleteSong?.setOnClickListener {
 
+            val file = File(music2.audio)
+            if (file.exists()) file.delete()
+
+
+            musicList.removeAt(position)
+            DownloadedFragment.musicListMA = musicList
+            notifyDataSetChanged()
+
+            CoroutineScope(Dispatchers.IO).launch {
+                userCases!!.deleteMusicDownloadedUserCase.invoke(music2.name)
+            }
+            Toast.makeText(context, "Delete song successfully", Toast.LENGTH_LONG).show()
+
             bottomSheet.dismiss()
         }
+
     bottomSheet.show()
 
 }
@@ -265,7 +269,6 @@ fun addPlaylist(name: String, context: Context) {
             break
         }
     }
-
 
 
     if (playlistExists) Toast.makeText(context, "Playlist Exist!!", Toast.LENGTH_SHORT).show()
